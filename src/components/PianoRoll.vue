@@ -1,0 +1,109 @@
+<script lang="ts" setup>
+import { onKeyDown } from "@vueuse/core";
+import { useAppStore } from "@/store/app";
+import { Howl, Howler } from "howler";
+import paper from "paper";
+import { getRandomColor } from "@/utils/getRandomColor";
+import { ref, computed, Ref } from "vue";
+import { onMounted } from "vue";
+import { PathParserOptions } from "vue-router";
+
+// Import other sound files as needed
+
+const appStore = useAppStore();
+const hello: Ref<string> = ref("helllo");
+
+const letters = [
+  "a",
+  "b",
+  "c",
+  "d",
+  "e",
+  "f",
+  "g",
+  "h",
+  "i",
+  "j",
+  "k",
+  "l",
+  "m",
+  "n",
+  "o",
+  "p",
+  "q",
+  "r",
+  "s",
+  "t",
+  "u",
+  "v",
+  "w",
+  "x",
+  "y",
+  "z",
+];
+const sounds = computed(() => appStore.getSounds);
+// const testingSound = ref([bubbleSound, claySound])
+type Sound = {
+  letter: string;
+  color: string;
+  sound: Howl;
+};
+const keyData = ref([] as Sound[]);
+onMounted(() => {
+  for (var i = 0; i < letters.length; i++) {
+    keyData.value.push({
+      letter: letters[i],
+      color: getRandomColor(),
+      sound: new Howl({ src: [sounds.value[i]] }),
+    });
+  }
+});
+
+onKeyDown((e: KeyboardEvent) => {
+  const key = e.key;
+
+  if (key === "a") {
+    console.log({ key });
+  }
+
+  keyData.value.find((k) => k.letter === key)?.sound.play();
+  // if (keyData[key]) {
+  // var maxPoint = new Point(view.size.width, view.size.height);
+  // var randPoint = Point.random();
+  // var point = maxPoint * randPoint;
+  // var nCrcl = new Path.Circle(point, 360);
+
+  // nCrcl.fillColor = keyData[event.key].color;
+
+  // crcl.push(nCrcl);
+  // }
+});
+
+window.onload = function () {
+  // Get a reference to the canvas object
+  var canvas = document.getElementById("myCanvas") as HTMLCanvasElement;
+  // Create an empty project and a view for the canvas:
+  paper.setup(canvas);
+  // Create a Paper.js Path to draw a line into it:
+  var path = new paper.Path();
+  // Give the stroke a color
+  path.strokeColor = "black" as unknown as  paper.Color;
+  var start = new paper.Point(100, 100);
+  // Move to start and draw a line from there
+  path.moveTo(start);
+  // Note that the plus operator on Point objects does not work
+  // in JavaScript. Instead, we need to call the add() function:
+  path.lineTo(start.add([200, -50]));
+  // Draw the view now:
+  paper.view.draw();
+};
+</script>
+
+<template>
+  <v-card :title="hello">
+    <v-card-text>
+      <!-- <pre>{{ sounds }}</pre> -->
+      <canvas id="myCanvas"></canvas>
+    </v-card-text>
+  </v-card>
+</template>
