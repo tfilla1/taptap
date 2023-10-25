@@ -1,6 +1,6 @@
 // Utilities
 import { defineStore } from 'pinia'
-
+import { pino } from '@/assets/keyboard/pino'
 import bubbleSound from '@/assets/sounds/bubbles.mp3';
 import claySound from '@/assets/sounds/clay.mp3';
 import confettiSound from '@/assets/sounds/confetti.mp3';
@@ -34,34 +34,36 @@ export const useAppStore = defineStore('app', {
   }),
   actions: {
     loadSounds() {
-      this.sounds = [
-        bubbleSound,
-        claySound,
-        confettiSound,
-        coronaSound,
-        dottedSpiralSound,
-        flash1Sound,
-        flash2Sound,
-        flash3Sound,
-        glimmerSound,
-        moonSound,
-        pinwheelSound,
-        piston1Sound,
-        piston2Sound,
-        piston3Sound,
-        prism1Sound,
-        prism2Sound,
-        prism3Sound,
-        splitsSound,
-        squiggleSound,
-        strikeSound,
-        suspensionSound,
-        timerSound,
-        ufoSound,
-        veilSound,
-        wipeSound,
-        zigZagSound
-      ]
+      this.sounds = pino
+
+      // this.sounds = [
+      //   bubbleSound,
+      //   claySound,
+      //   confettiSound,
+      //   coronaSound,
+      //   dottedSpiralSound,
+      //   flash1Sound,
+      //   flash2Sound,
+      //   flash3Sound,
+      //   glimmerSound,
+      //   moonSound,
+      //   pinwheelSound,
+      //   piston1Sound,
+      //   piston2Sound,
+      //   piston3Sound,
+      //   prism1Sound,
+      //   prism2Sound,
+      //   prism3Sound,
+      //   splitsSound,
+      //   squiggleSound,
+      //   strikeSound,
+      //   suspensionSound,
+      //   timerSound,
+      //   ufoSound,
+      //   veilSound,
+      //   wipeSound,
+      //   zigZagSound
+      // ]
 
       // this.sounds = ['@/assets/sounds/bubbles.mp3', '../assets/sounds/clay.mp3',
       //   'assets/sounds/confetti.mp3', 'assets/sounds/corona.mp3', 'assets/sounds/dotted-spiral.mp3',
