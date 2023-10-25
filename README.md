@@ -26,6 +26,8 @@ git commit -m '{update message}'
 git push origin {user}/{feature}
 ```
 
+then submit a pull request, through github
+
 install bun, this will be the package manager and server we'll use.
 
 ```{shell}
