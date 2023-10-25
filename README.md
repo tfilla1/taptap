@@ -41,6 +41,9 @@ bun run build
 bun run lint
 ```
 
+The app will start running on [https://localhost:3420/]
+
+
 ## Other Things
 
 [draw shapes using paperjs](http://paperjs.org/)
