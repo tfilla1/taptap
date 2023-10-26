@@ -9,25 +9,22 @@ class Sound {
 
 export default class Pino {
   sound: Sound[];
-  key: string[];
-  note: string[];
-  octave: string[];
+  note: string | string[];
+  key?: string[];
   color: string;
-  border: string;
+  border?: string;
 
   constructor(
     sound: Sound[],
-    key: string[],
     note: string[],
-    octave: string[],
     color: string,
-    border: string
+    border?: string,
+    key?: string[],
   ) {
     this.sound = sound;
-    this.key = key;
+    this.key = key ?? [];
     this.note = note;
-    this.octave = octave;
     this.color = color;
-    this.border = border;
+    this.border = border ?? '';
   }
 }

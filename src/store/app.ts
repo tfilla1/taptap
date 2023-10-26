@@ -28,9 +28,10 @@ import veilSound from '@/assets/sounds/veil.mp3';
 import wipeSound from '@/assets/sounds/wipe.mp3';
 import zigZagSound from '@/assets/sounds/zig-zag.mp3';
 
+import Pino from '@/classes/Pino'
 export const useAppStore = defineStore('app', {
   state: () => ({
-    sounds: [] as string[]
+    sounds: [] as Pino[]
   }),
   actions: {
     loadSounds() {
