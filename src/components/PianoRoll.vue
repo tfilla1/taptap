@@ -8,40 +8,13 @@ import { ref, computed, Ref } from "vue";
 import { onMounted } from "vue";
 import init from "@/services/baseball";
 import { Keyboard } from "@/services/keyboard";
+import { white_keys, black_keys, mod_keys } from "@/utils/keyboard";
 
 // Import other sound files as needed
 
 const appStore = useAppStore();
 const hello: Ref<string> = ref("helllo");
 
-const letters = [
-  "a",
-  "b",
-  "c",
-  "d",
-  "e",
-  "f",
-  "g",
-  "h",
-  "i",
-  "j",
-  "k",
-  "l",
-  "m",
-  "n",
-  "o",
-  "p",
-  "q",
-  "r",
-  "s",
-  "t",
-  "u",
-  "v",
-  "w",
-  "x",
-  "y",
-  "z",
-];
 const sounds = computed(() => appStore.getSounds);
 // const testingSound = ref([bubbleSound, claySound])
 type Sound = {
@@ -53,23 +26,30 @@ const keyData = ref([] as Sound[]);
 onMounted(() => {
   // init();
 
-  const kb = new Keyboard([{ color: "ff00aa", letter: 'A', sound: new Howl({ src: [sounds.value[1]]}) }]);
+  const kb = new Keyboard([
+    {
+      color: "ff00aa",
+      letter: "A",
+      sound: new Howl({ src: [sounds.value[1]] }),
+    },
+  ]);
 
-  kb.draw()
-  for (var i = 0; i < letters.length; i++) {
+  kb.draw();
+  for (var i = 0; i < white_keys.length; i++) {
     keyData.value.push({
-      letter: letters[i],
+      letter: white_keys[i],
       color: getRandomColor(),
       sound: new Howl({ src: [sounds.value[i]] }),
     });
   }
 });
 
-onKeyDown(letters, (e: KeyboardEvent) => {
+onKeyDown(white_keys, (e: KeyboardEvent) => {
   const key = e.key;
 
-  if (key === "a") {
+  if (key === ";") {
     console.log({ key });
+    console.log(keyData.value.find((k) => k.letter === key)?.sound);
   }
 
   keyData.value.find((k) => k.letter === key)?.sound.play();
@@ -109,7 +89,7 @@ onKeyDown(letters, (e: KeyboardEvent) => {
   <v-card :title="hello">
     <v-card-text>
       <!-- <pre>{{ sounds }}</pre> -->
-      <canvas id="thng" width="600" height="600"></canvas>
+      <canvas id="pinot" width="600" height="600"></canvas>
     </v-card-text>
   </v-card>
 </template>
