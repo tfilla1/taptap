@@ -1,7 +1,7 @@
 class Sound {
-  octave: string;
+  octave: number;
   source: string;
-  constructor(octave: string, source: string) {
+  constructor(octave: number, source: string) {
     this.octave = octave;
     this.source = source;
   }
@@ -10,9 +10,10 @@ class Sound {
 export default class Pino {
   sound: Sound[];
   note: string | string[];
-  key?: string[];
   color: string;
+  key?: string[];
   border?: string;
+  semitone?: boolean;
 
   constructor(
     sound: Sound[],
@@ -20,11 +21,13 @@ export default class Pino {
     color: string,
     border?: string,
     key?: string[],
+    semitone?: boolean
   ) {
     this.sound = sound;
     this.key = key ?? [];
     this.note = note;
     this.color = color;
     this.border = border ?? '';
+    this.semitone = semitone ?? false;
   }
 }

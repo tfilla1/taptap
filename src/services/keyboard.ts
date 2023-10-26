@@ -1,16 +1,16 @@
 
 import { Howl } from 'howler'
-
+import Pino from '@/classes/Pino'
 
 export class Keyboard {
-  notes: Note[]
+  pinos: Pino[]
   canvas: HTMLCanvasElement
   context: CanvasRenderingContext2D
 
-  constructor(notes: Note[]) {
-    this.canvas = document.getElementById('thng') as HTMLCanvasElement;
+  constructor(pinos: Pino[]) {
+    this.canvas = document.getElementById('pinot') as HTMLCanvasElement;
     this.context = this.canvas.getContext('2d')!;
-    this.notes = notes
+    this.pinos = pinos
   }
 
   init() {
@@ -28,9 +28,14 @@ export class Keyboard {
   draw() {
     const board = 100;
     const key = 40;
+    const minor = 20;
 
     this.colorRect(0, 0, this.canvas.width, this.canvas.height, '#8c9');
     this.colorRect(0, 0, this.canvas.width, board, '#c8f');
+
+    for (const p of this.pinos) {
+      console.log({p})
+    }
 
     for (let i = 0; i < 17; i++) {
       this.drawRect(i * key, 0, key, board, '#f0a');

@@ -7,9 +7,7 @@ export const white_keys = [
   "h",
   "j",
   "k",
-  "l",
-  ";",
-  "'"]
+  "l",]
 export const black_keys = [
   "w",
   "e",
@@ -17,7 +15,6 @@ export const black_keys = [
   "y",
   "u",
   "o",
-  "p",
 ];
 
 export const mod_keys = [

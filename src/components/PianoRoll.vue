@@ -15,7 +15,8 @@ import { white_keys, black_keys, mod_keys } from "@/utils/keyboard";
 const appStore = useAppStore();
 const hello: Ref<string> = ref("helllo");
 
-const sounds = computed(() => appStore.getSounds);
+const octave: Ref<number> = ref(1);
+const pinos = computed(() => appStore.getSounds);
 // const testingSound = ref([bubbleSound, claySound])
 type Sound = {
   letter: string;
@@ -26,20 +27,20 @@ const keyData = ref([] as Sound[]);
 onMounted(() => {
   // init();
 
-  const kb = new Keyboard([
-    {
-      color: "ff00aa",
-      letter: "A",
-      sound: new Howl({ src: [sounds.value[1]] }),
-    },
-  ]);
+  const kb = new Keyboard(appStore.getSounds);
 
   kb.draw();
-  for (var i = 0; i < white_keys.length; i++) {
+  for (const pino of pinos.value) {
+    console.log(typeof pino.key)
+    console.log(pino.key![0])
     keyData.value.push({
-      letter: white_keys[i],
+      letter: pino.key ? pino.key[0] : 'a',
       color: getRandomColor(),
-      sound: new Howl({ src: [sounds.value[i]] }),
+      sound: new Howl({
+        src: pino.sound
+          .filter((x) => x.octave === octave.value)
+          .map((x) => x.source),
+      }),
     });
   }
 });
@@ -47,11 +48,8 @@ onMounted(() => {
 onKeyDown(white_keys, (e: KeyboardEvent) => {
   const key = e.key;
 
-  if (key === ";") {
-    console.log({ key });
-    console.log(keyData.value.find((k) => k.letter === key)?.sound);
-  }
-
+  console.log({ key });
+  console.log(keyData.value.find((k) => k.letter === key));
   keyData.value.find((k) => k.letter === key)?.sound.play();
   // if (keyData[key]) {
   // var maxPoint = new Point(view.size.width, view.size.height);
@@ -65,6 +63,13 @@ onKeyDown(white_keys, (e: KeyboardEvent) => {
   // }
 });
 
+onKeyDown(black_keys, (e: KeyboardEvent) => {
+  const key = e.key;
+  console.log('HERE')
+  console.log({ key });
+  console.log(keyData.value.find((k) => k.letter === key));
+  keyData.value.find((k) => k.letter === key)?.sound.play();
+});
 // window.onload = function () {
 //   // Get a reference to the canvas object
 //   var canvas = document.getElementById("myCanvas") as HTMLCanvasElement;
@@ -93,4 +98,3 @@ onKeyDown(white_keys, (e: KeyboardEvent) => {
     </v-card-text>
   </v-card>
 </template>
-@/services/baseball
