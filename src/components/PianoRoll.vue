@@ -86,7 +86,7 @@ onKeyDown(keys, (e: KeyboardEvent) => {
 <template>
   <v-card :title="hello">
     <v-card-text>
-      <!-- <pre>{{ sounds }}</pre> -->
+      <!-- <pre>{{ pinos }}</pre> -->
       <div :style="{backgroundColor: keyColor}">{{ keyColor }}</div>
       <canvas id="pinot" width="600" height="600"></canvas>
     </v-card-text>
