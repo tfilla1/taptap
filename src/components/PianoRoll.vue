@@ -8,9 +8,15 @@ import { ref, computed, Ref } from "vue";
 import { onMounted } from "vue";
 import init from "@/services/baseball";
 import { Keyboard } from "@/services/keyboard";
+import Pino from "@/classes/Pino";
 import { white_keys, black_keys, mod_keys } from "@/utils/keyboard";
+import { ppid } from "process";
+import Home from "@/views/Home.vue";
 
 // Import other sound files as needed
+
+const keys = [white_keys, black_keys].flat();
+// keys.push(white_keys)
 
 const appStore = useAppStore();
 const hello: Ref<string> = ref("helllo");
@@ -18,39 +24,33 @@ const hello: Ref<string> = ref("helllo");
 const octave: Ref<number> = ref(1);
 const pinos = computed(() => appStore.getSounds);
 // const testingSound = ref([bubbleSound, claySound])
-type Sound = {
-  letter: string;
-  color: string;
-  sound: Howl;
-};
-const keyData = ref([] as Sound[]);
+
+const keyData = ref([] as Pino[]);
 onMounted(() => {
   // init();
 
   const kb = new Keyboard(appStore.getSounds);
-
+  console.log({ pino: pinos.value });
   kb.draw();
-  for (const pino of pinos.value) {
-    console.log(typeof pino.key)
-    console.log(pino.key![0])
-    keyData.value.push({
-      letter: pino.key ? pino.key[0] : 'a',
-      color: getRandomColor(),
-      sound: new Howl({
-        src: pino.sound
-          .filter((x) => x.octave === octave.value)
-          .map((x) => x.source),
-      }),
-    });
-  }
 });
-
-onKeyDown(white_keys, (e: KeyboardEvent) => {
+const keyColor = ref('#ff00aa')
+onKeyDown(keys, (e: KeyboardEvent) => {
   const key = e.key;
 
-  console.log({ key });
-  console.log(keyData.value.find((k) => k.letter === key));
-  keyData.value.find((k) => k.letter === key)?.sound.play();
+  const pino = pinos.value.find((p) => p.key?.includes(key));
+
+  keyColor.value = pino?.color ?? ''
+  const source = pino?.sound
+    .filter((s) => s.octave === octave.value)
+    .map((s) => ({ source: s.source, sound: new Howl({ src: [s.source] }) }))
+    .flat(2);
+
+  // find((s) => s.octave === octave.value)?.source;
+
+  if (source) {
+    console.log({ source: source[0] });
+    source[0].sound.play();
+  }
   // if (keyData[key]) {
   // var maxPoint = new Point(view.size.width, view.size.height);
   // var randPoint = Point.random();
@@ -63,13 +63,6 @@ onKeyDown(white_keys, (e: KeyboardEvent) => {
   // }
 });
 
-onKeyDown(black_keys, (e: KeyboardEvent) => {
-  const key = e.key;
-  console.log('HERE')
-  console.log({ key });
-  console.log(keyData.value.find((k) => k.letter === key));
-  keyData.value.find((k) => k.letter === key)?.sound.play();
-});
 // window.onload = function () {
 //   // Get a reference to the canvas object
 //   var canvas = document.getElementById("myCanvas") as HTMLCanvasElement;
@@ -94,6 +87,7 @@ onKeyDown(black_keys, (e: KeyboardEvent) => {
   <v-card :title="hello">
     <v-card-text>
       <!-- <pre>{{ sounds }}</pre> -->
+      <div :style="{backgroundColor: keyColor}">{{ keyColor }}</div>
       <canvas id="pinot" width="600" height="600"></canvas>
     </v-card-text>
   </v-card>
