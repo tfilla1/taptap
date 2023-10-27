@@ -22,7 +22,9 @@
   },
   "devDependencies": {
     "@babel/types": "^7.21.4",
+    "@types/howler": "^2.2.10",
     "@types/node": "^18.15.0",
+    "@types/p5": "^1.7.1",
     "@vitejs/plugin-vue": "^4.0.0",
     "@vue/eslint-config-typescript": "^11.0.0",
     "eslint": "^8.37.0",

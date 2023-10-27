@@ -6,67 +6,51 @@ import paper from "paper";
 import { getRandomColor } from "@/utils/getRandomColor";
 import { ref, computed, Ref } from "vue";
 import { onMounted } from "vue";
-import { PathParserOptions } from "vue-router";
+import init from "@/services/baseball";
+import { Keyboard } from "@/services/keyboard";
+import Pino from "@/classes/Pino";
+import { white_keys, black_keys, mod_keys } from "@/utils/keyboard";
+import { ppid } from "process";
+import Home from "@/views/Home.vue";
 
 // Import other sound files as needed
+
+const keys = [white_keys, black_keys].flat();
+// keys.push(white_keys)
 
 const appStore = useAppStore();
 const hello: Ref<string> = ref("helllo");
 
-const letters = [
-  "a",
-  "b",
-  "c",
-  "d",
-  "e",
-  "f",
-  "g",
-  "h",
-  "i",
-  "j",
-  "k",
-  "l",
-  "m",
-  "n",
-  "o",
-  "p",
-  "q",
-  "r",
-  "s",
-  "t",
-  "u",
-  "v",
-  "w",
-  "x",
-  "y",
-  "z",
-];
-const sounds = computed(() => appStore.getSounds);
+const octave: Ref<number> = ref(1);
+const pinos = computed(() => appStore.getSounds);
 // const testingSound = ref([bubbleSound, claySound])
-type Sound = {
-  letter: string;
-  color: string;
-  sound: Howl;
-};
-const keyData = ref([] as Sound[]);
-onMounted(() => {
-  for (var i = 0; i < letters.length; i++) {
-    keyData.value.push({
-      letter: letters[i],
-      color: getRandomColor(),
-      sound: new Howl({ src: [sounds.value[i]] }),
-    });
-  }
-});
 
-onKeyDown((e: KeyboardEvent) => {
+const keyData = ref([] as Pino[]);
+onMounted(() => {
+  // init();
+
+  const kb = new Keyboard(appStore.getSounds);
+  console.log({ pino: pinos.value });
+  kb.draw();
+});
+const keyColor = ref('#ff00aa')
+onKeyDown(keys, (e: KeyboardEvent) => {
   const key = e.key;
 
-  if (key === "a") {
-    console.log({ key });
-  }
+  const pino = pinos.value.find((p) => p.key?.includes(key));
 
-  keyData.value.find((k) => k.letter === key)?.sound.play();
+  keyColor.value = pino?.color ?? ''
+  const source = pino?.sound
+    .filter((s) => s.octave === octave.value)
+    .map((s) => ({ source: s.source, sound: new Howl({ src: [s.source] }) }))
+    .flat(2);
+
+  // find((s) => s.octave === octave.value)?.source;
+
+  if (source) {
+    console.log({ source: source[0] });
+    source[0].sound.play();
+  }
   // if (keyData[key]) {
   // var maxPoint = new Point(view.size.width, view.size.height);
   // var randPoint = Point.random();
@@ -79,31 +63,32 @@ onKeyDown((e: KeyboardEvent) => {
   // }
 });
 
-window.onload = function () {
-  // Get a reference to the canvas object
-  var canvas = document.getElementById("myCanvas") as HTMLCanvasElement;
-  // Create an empty project and a view for the canvas:
-  paper.setup(canvas);
-  // Create a Paper.js Path to draw a line into it:
-  var path = new paper.Path();
-  // Give the stroke a color
-  path.strokeColor = "black" as unknown as  paper.Color;
-  var start = new paper.Point(100, 100);
-  // Move to start and draw a line from there
-  path.moveTo(start);
-  // Note that the plus operator on Point objects does not work
-  // in JavaScript. Instead, we need to call the add() function:
-  path.lineTo(start.add([200, -50]));
-  // Draw the view now:
-  paper.view.draw();
-};
+// window.onload = function () {
+//   // Get a reference to the canvas object
+//   var canvas = document.getElementById("myCanvas") as HTMLCanvasElement;
+//   // Create an empty project and a view for the canvas:
+//   paper.setup(canvas);
+//   // Create a Paper.js Path to draw a line into it:
+//   var path = new paper.Path();
+//   // Give the stroke a color
+//   path.strokeColor = "black" as unknown as  paper.Color;
+//   var start = new paper.Point(100, 100);
+//   // Move to start and draw a line from there
+//   path.moveTo(start);
+//   // Note that the plus operator on Point objects does not work
+//   // in JavaScript. Instead, we need to call the add() function:
+//   path.lineTo(start.add([200, -50]));
+//   // Draw the view now:
+//   paper.view.draw();
+// };
 </script>
 
 <template>
   <v-card :title="hello">
     <v-card-text>
-      <!-- <pre>{{ sounds }}</pre> -->
-      <canvas id="myCanvas"></canvas>
+      <!-- <pre>{{ pinos }}</pre> -->
+      <div :style="{backgroundColor: keyColor}">{{ keyColor }}</div>
+      <canvas id="pinot" width="600" height="600"></canvas>
     </v-card-text>
   </v-card>
 </template>
