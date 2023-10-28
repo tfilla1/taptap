@@ -44,6 +44,7 @@ export const pino: Pino[] = [
     note: ["C#", "Db"],
     key: ['w', 'W', 'o', 'O'],
     color: "#F28500",
+    semitone: true,
     sound: [
       {
         octave: 1,

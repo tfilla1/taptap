@@ -10,8 +10,6 @@ import init from "@/services/baseball";
 import { Keyboard } from "@/services/keyboard";
 import Pino from "@/classes/Pino";
 import { white_keys, black_keys, mod_keys } from "@/utils/keyboard";
-import { ppid } from "process";
-import Home from "@/views/Home.vue";
 
 // Import other sound files as needed
 
@@ -21,15 +19,14 @@ const keys = [white_keys, black_keys].flat();
 const appStore = useAppStore();
 const hello: Ref<string> = ref("helllo");
 
-const octave: Ref<number> = ref(1);
+const octave: Ref<number> = ref(2);
 const pinos = computed(() => appStore.getSounds);
 // const testingSound = ref([bubbleSound, claySound])
 
-const keyData = ref([] as Pino[]);
 onMounted(() => {
   // init();
 
-  const kb = new Keyboard(appStore.getSounds);
+  const kb = new Keyboard(appStore.getSounds, octave.value);
   console.log({ pino: pinos.value });
   kb.draw();
 });
