@@ -10,7 +10,10 @@
   },
   "dependencies": {
     "@mdi/font": "7.0.96",
+    "@mdi/js": "^7.3.67",
+    "@types/animejs": "^3.1.10",
     "@vueuse/core": "^10.5.0",
+    "animejs": "^3.2.1",
     "core-js": "^3.29.0",
     "howler": "^2.2.4",
     "paper": "^0.12.17",
