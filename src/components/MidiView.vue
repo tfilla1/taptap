@@ -13,10 +13,12 @@ const onMIDISuccess = (midiAccess: MIDIAccess) => {
   midi.value = midiAccess;
 
   const innout = listInputsAndOutputs(midiAccess);
+
+  subtitle.value = `Connected: ${innout.input.manufacturer}  ${innout.input.name}`
   // content.value = innout.thingInput;
 
   console.log({ innout });
-  //TODO startLoggingMIDIInput(midiAccess, innout.thingInput?.id);
+  startLoggingMIDIInput(midiAccess, innout.input?.id);
 };
 
 const onMIDIFailure = (msg: any) => {
@@ -25,7 +27,7 @@ const onMIDIFailure = (msg: any) => {
 };
 
 function onMIDIMessage(event: any) {
-  let str = `MIDI message received at timestamp ${event.timeStamp}[${event.data.length} bytes]: `;
+  let str = `MIDI message received at timestamp ${event.timeStamp}[${event.data} bytes]: `;
   console.log(event.data);
 
   for (const character of event.data) {
@@ -47,29 +49,58 @@ const startLoggingMIDIInput = (
   });
 };
 
-const listInputsAndOutputs = (midiAccess: MIDIAccess) => {
-  let thingInput = midiAccess.inputs.forEach((entry) => {
-    const input = entry;
-    console.log(
-      `Input port [type:'${input.type}']` +
-        ` id:'${input.id}'` +
-        ` manufacturer:'${input.manufacturer}'` +
-        ` name:'${input.name}'` +
-        ` version:'${input.version}'`
-    );
-    return input;
-  });
+// const listInputsAndOutputs = (midiAccess: any) => {
+//   let thingInput = midiAccess.inputs.forEach((entry:any) => entry).join()
+//   // .forEach((entry) => {
+//   //   const input = entry;
+//   //   console.log({entry})
+//   //   console.log(
+//   //     `Input port [type:'${input.type}']` +
+//   //       ` id:'${input.id}'` +
+//   //       ` manufacturer:'${input.manufacturer}'` +
+//   //       ` name:'${input.name}'` +
+//   //       ` version:'${input.version}'`
+//   //   );
+//   //   return input;
+//   // });
 
-  let thingOutput = midiAccess.outputs.forEach((entry) => {
-    const output = entry;
-    console.log(
-      `Output port [type:'${output.type}'] id:'${output.id}' manufacturer:'${output.manufacturer}' name:'${output.name}' version:'${output.version}'`
-    );
-    return output;
-  });
+//   let thingOutput = midiAccess.outputs
+//   // .forEach((entry) => {
+//   //   const output = entry;
+//   //   console.log(
+//   //     `Output port [type:'${output.type}'] id:'${output.id}' manufacturer:'${output.manufacturer}' name:'${output.name}' version:'${output.version}'`
+//   //   );
+//   //   return output;
+//   // });
 
-  return { thingInput, thingOutput };
-};
+//   console.log({thingOutput})
+//   return { thingInput, thingOutput };
+// };
+
+function listInputsAndOutputs(midiAccess:any) {
+  const returnObject = {} as any
+  let input
+  let output
+  for (const entry of midiAccess.inputs) {
+    input = entry[1];
+    console.log(
+      `Input port [type:'${input.type}'] id:'${input.id}' manufacturer: '${input.manufacturer}' name: '${input.name}' version: '${input.version}'`,
+    );
+  }
+
+  for (const entry of midiAccess.outputs) {
+    output = entry[1];
+    console.log(
+      `Output port [type:'${output.type}'] id: '${output.id}' manufacturer: '${output.manufacturer}' name: '${output.name}' version: '${output.version}'`,
+    );
+  }
+
+  returnObject.input = input ?? 'something'
+  returnObject.output = output ?? 'something'
+
+  console.log({returnObject})
+  return returnObject
+}
 
 // onMounted(() => {
 //   navigator.requestMIDIAccess().then((access: any) => {
@@ -88,7 +119,15 @@ const listInputsAndOutputs = (midiAccess: MIDIAccess) => {
 //   });
 // });
 
-navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
+// navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
+navigator.requestMIDIAccess().then((midiAccess: any) => {
+  Array.from(midiAccess.inputs).forEach((input: any) => {
+    input[1].onmidimessage = (msg: any) => {
+      console.log(msg);
+      // console.log(msg.data);
+    };
+  });
+});
 
 const title = ref("helllo");
 const subtitle = ref("Please connect your MIDI device to begin");
