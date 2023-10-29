@@ -13,7 +13,7 @@ export default class Pino {
   color: string;
   key?: string[];
   border?: string;
-  semitone?: boolean;
+  enharmonics?: boolean;
 
   constructor(
     sound: Sound[],
@@ -21,13 +21,13 @@ export default class Pino {
     color: string,
     border?: string,
     key?: string[],
-    semitone?: boolean
+    enharmonics?: boolean
   ) {
     this.sound = sound;
     this.key = key ?? [];
     this.note = note;
     this.color = color;
     this.border = border ?? '';
-    this.semitone = semitone ?? false;
+    this.enharmonics = enharmonics ?? false;
   }
 }

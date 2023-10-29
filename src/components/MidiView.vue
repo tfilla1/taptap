@@ -123,8 +123,8 @@ function listInputsAndOutputs(midiAccess:any) {
 navigator.requestMIDIAccess().then((midiAccess: any) => {
   Array.from(midiAccess.inputs).forEach((input: any) => {
     input[1].onmidimessage = (msg: any) => {
-      console.log(msg);
-      // console.log(msg.data);
+      // console.log(msg);
+      console.log(msg.data);
     };
   });
 });
