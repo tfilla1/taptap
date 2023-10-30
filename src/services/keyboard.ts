@@ -1,5 +1,6 @@
 import { Howl } from "howler";
 import Pino from "@/classes/Pino";
+import _ from 'lodash';
 
 export class Keyboard {
   pinos: Pino[];
@@ -55,16 +56,50 @@ export class Keyboard {
       : this.context!.fillText(text, topLeftX, topLeftY, maxWidth);
   }
 
-  drawKeys (keyboard: number, boardBottomY: number, key: number, minor: number, board: number, boardY: number) {
-    for (const p of this.pinos) {
+  drawKeys(octave: number, boardBottomY: number, key: number, minor: number, board: number, boardY: number) {
+    const things = _.orderBy(this.pinos, 'note', 'desc')
+    console.log({ things })
+
+    let previousWasEnharmonics = false
+    for (const p of things) {
       console.log({ p });
 
-      if (p.semitone) {
-        this.colorRect(keyboard, boardBottomY, minor * 2, board / 2, p.color);
-        this.drawRect(keyboard, boardBottomY, minor * 4, board / 2, '#000');
+      if (p.enharmonics) {
+        previousWasEnharmonics = true
+
+        // black keys -- enharmonics
+        this.colorRect(octave, boardBottomY, minor, board / 2, p.color);
+        this.drawRect(octave, boardBottomY, minor, board / 2, '#000');
+
       } else {
-        this.colorRect(keyboard, boardY, key + minor, board, p.color);
-        this.drawRect(keyboard, boardY, key + minor, board, "#000");
+
+        if (previousWasEnharmonics) {
+          // key related to an enharmonics key
+          this.colorRect(octave - minor, boardY, key, board, p.color);
+          // this.drawRect(octave + minor, boardY, key, board, "#000");
+
+          // fill in space between enharmonic
+          this.colorRect(octave + minor, boardY, key / 2, board / 2, p.color);
+          console.log('prev')
+
+          // this.colorRect(octave, 0, minor, board / 2, p.color);
+          // this.drawRect(octave, 0, minor, board / 2, '#000');
+
+
+          this.colorRect(octave + minor + minor, boardBottomY, minor, board / 2, p.color);
+          this.drawRect(octave + minor + minor, boardBottomY, minor, board / 2, '#000');
+        } else {
+          // key with no previous enharmonics
+
+          // this.colorRect(octave + minor, boardY, key, board, "#f0a");
+
+          this.colorRect(octave - minor, boardY, key / 2, board / 2, p.color);
+          this.colorRect(octave, boardY, key / 2, board, p.color);
+          this.drawRect(octave - minor, boardY, key, board, "#000");
+        }
+
+        previousWasEnharmonics = false
+
       }
 
       if (typeof p.note === "string") {
@@ -73,7 +108,7 @@ export class Keyboard {
           "18px sans-serif",
           "black",
           false,
-          keyboard,
+          octave,
           boardY + minor,
           100
         );
@@ -83,13 +118,13 @@ export class Keyboard {
           "18px sans-serif",
           "black",
           false,
-          keyboard,
+          octave,
           575,
           100
         );
       }
 
-      keyboard += p.semitone ? minor : key;
+      octave -= p.enharmonics ? minor : key;
 
       console.log(typeof p.note);
     }
@@ -101,19 +136,19 @@ export class Keyboard {
     const key = 40;
     const minor = 20;
 
-    const keyboard = 0;
+    const octave = 420;
 
     this.colorRect(0, 0, this.canvas.width, this.canvas.height, "#8c9");
     this.colorRect(0, boardY, this.canvas.width, board, "#c8f");
 
     console.log({ pinos: this.pinos });
     console.log({ octave: this.octave });
-    // const kb = this.pinos.filter(p => !p.semitone)
-    // const semitones = this.pinos.filter(p => p.semitone)
+    // const kb = this.pinos.filter(p => !p.enharmonics)
+    // const semitones = this.pinos.filter(p => p.enharmonics)
 
     // console.log({kb})
     // console.log({semitones})
-    this.drawKeys(keyboard, boardBottomY, key, minor, board, boardY)
+    this.drawKeys(octave, boardBottomY, key, minor, board, boardY)
     // this.drawKeys(250, boardBottomY, key, minor, board, boardY)
 
   }

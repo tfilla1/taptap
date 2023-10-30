@@ -11,9 +11,9 @@ import { Keyboard } from "@/services/keyboard";
 import Pino from "@/classes/Pino";
 import { white_keys, black_keys, mod_keys } from "@/utils/keyboard";
 
-// Import other sound files as needed
 
 const keys = [white_keys, black_keys].flat();
+// Import other sound files as needed
 // keys.push(white_keys)
 
 const appStore = useAppStore();
@@ -30,14 +30,14 @@ onMounted(() => {
   console.log({ pino: pinos.value });
   kb.draw();
 });
-const keyColor = ref('#ff00aa')
+const keyColor = ref("#ff00aa");
 onKeyDown(keys, (e: KeyboardEvent) => {
   const key = e.key;
 
   const pino = pinos.value.find((p) => p.key?.includes(key));
 
-  keyColor.value = pino?.color ?? ''
-  const source = pino?.sound
+  keyColor.value = pino?.color ?? "";
+  const source = pino?.pitches
     .filter((s) => s.octave === octave.value)
     .map((s) => ({ source: s.source, sound: new Howl({ src: [s.source] }) }))
     .flat(2);
@@ -84,8 +84,22 @@ onKeyDown(keys, (e: KeyboardEvent) => {
   <v-card :title="hello">
     <v-card-text>
       <!-- <pre>{{ pinos }}</pre> -->
-      <div :style="{backgroundColor: keyColor}">{{ keyColor }}</div>
+      <div :style="{ backgroundColor: keyColor }">{{ keyColor }}</div>
       <canvas id="pinot" width="600" height="600"></canvas>
+      <!-- <div style="position: relative">
+        <canvas
+          id="layer1"
+          width="100"
+          height="100"
+          style="position: absolute; left: 0; top: 0; z-index: 0"
+        ></canvas>
+        <canvas
+          id="layer2"
+          width="100"
+          height="100"
+          style="position: absolute; left: 0; top: 0; z-index: 1"
+        ></canvas>
+      </div> -->
     </v-card-text>
   </v-card>
 </template>

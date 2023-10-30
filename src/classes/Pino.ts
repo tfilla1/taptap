@@ -1,4 +1,4 @@
-class Sound {
+class Pitch {
   octave: number;
   source: string;
   constructor(octave: number, source: string) {
@@ -8,7 +8,7 @@ class Sound {
 }
 
 export default class Pino {
-  sound: Sound[];
+  pitches: Pitch[];
   note: string | string[];
   color: string;
   key?: string[];
@@ -16,14 +16,14 @@ export default class Pino {
   enharmonics?: boolean;
 
   constructor(
-    sound: Sound[],
+    pitches: Pitch[],
     note: string[],
     color: string,
     border?: string,
     key?: string[],
     enharmonics?: boolean
   ) {
-    this.sound = sound;
+    this.pitches = pitches;
     this.key = key ?? [];
     this.note = note;
     this.color = color;

@@ -16,6 +16,7 @@
     "animejs": "^3.2.1",
     "core-js": "^3.29.0",
     "howler": "^2.2.4",
+    "lodash": "^4.17.21",
     "paper": "^0.12.17",
     "pinia": "^2.0.0",
     "roboto-fontface": "*",
@@ -26,6 +27,7 @@
   "devDependencies": {
     "@babel/types": "^7.21.4",
     "@types/howler": "^2.2.10",
+    "@types/lodash": "^4.14.200",
     "@types/node": "^18.15.0",
     "@types/p5": "^1.7.1",
     "@vitejs/plugin-vue": "^4.0.0",
