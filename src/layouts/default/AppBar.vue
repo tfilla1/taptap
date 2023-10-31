@@ -11,7 +11,6 @@
             @click="toggleTheme"
             >
           </v-btn>
-          <!-- :color="isDark ? 'white' : 'secondary'" -->
     </template>
   </v-app-bar>
 </template>

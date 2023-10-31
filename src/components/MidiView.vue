@@ -42,15 +42,42 @@ const onMIDIFailure = (msg: any) => {
 
 function onMIDIMessage(event: any) {
   let str = `MIDI message received at timestamp ${event.timeStamp}[${event.data} bytes]: `;
-  console.log(event.data);
+  console.log({ data: event.data[1] });
 
+  let midiKey = event.data[1];
+  let notes = pinos.value.map((p) => p.note);
+  const octave = Math.floor(midiKey / 12) - 1;
+  const note = notes[midiKey % 12];
+
+  let playNote = pinos.value.find((p) => p.note == note)?.pitches;
+  let soundNote = playNote?.filter((p) => p.octave === octave);
+  // return note + octave;
+  console.log({ something: event.data[1] % 12 });
+  console.log({ asdf: event.data[0] });
+
+  console.log({ note2Play: note + "" + octave, playNote, soundNote });
+  // 144: noteOn
+  // 128: noteOff
+  const something = playTheNote(note as string[], octave);
+  if (something) {
+    something[0].sound.play();
+  }
   for (const character of event.data) {
     console.log({ character });
-    str += `${character.toString(16)} `;
+    str += `0x${character.toString(16)} `;
   }
   console.log(str);
   return event.data;
 }
+
+const playTheNote = (note: string[], octave: number) => {
+  console.log(note);
+  let playNote = pinos.value.find((p) => p.note == note)?.pitches;
+  let soundNote = playNote?.filter((p) => p.octave === octave);
+  return soundNote
+    ?.map((s) => ({ source: s.source, sound: new Howl({ src: [s.source] }) }))
+    .flat(2);
+};
 
 const startLoggingMIDIInput = (
   midiAccess: MIDIAccess,
@@ -133,15 +160,15 @@ function listInputsAndOutputs(midiAccess: any) {
 //   });
 // });
 
-// navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
-navigator.requestMIDIAccess().then((midiAccess: any) => {
-  Array.from(midiAccess.inputs).forEach((input: any) => {
-    input[1].onmidimessage = (msg: any) => {
-      // console.log(msg);
-      console.log(msg.data);
-    };
-  });
-});
+navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
+// navigator.requestMIDIAccess().then((midiAccess: any) => {
+//   Array.from(midiAccess.inputs).forEach((input: any) => {
+//     input[1].onmidimessage = (msg: any) => {
+//       // console.log(msg);
+//       console.log(msg.data);
+//     };
+//   });
+// });
 
 const addSomething = (target: string, color: string) => {
   console.log(target);
@@ -168,22 +195,21 @@ const addSomething = (target: string, color: string) => {
     });
 };
 
-
-const minOctave = 1
-const maxOctave = 7
+const minOctave = 1;
+const maxOctave = 7;
 const changeOctave = (key: string) => {
-  if (key === 'z') {
-      octave.value--
-    } else if (key === 'x') {
-      octave.value++
-    }
-    if (octave.value < minOctave) {
-      octave.value = 7
-    }
-    if (octave.value > maxOctave) {
-      octave.value = 1
-    }
-}
+  if (key === "z") {
+    octave.value--;
+  } else if (key === "x") {
+    octave.value++;
+  }
+  if (octave.value < minOctave) {
+    octave.value = 7;
+  }
+  if (octave.value > maxOctave) {
+    octave.value = 1;
+  }
+};
 const start = () => {
   timeline.value.play();
 };
@@ -218,7 +244,7 @@ onKeyDown(keys, (e: KeyboardEvent) => {
       source[0].sound.play();
     }
   } else {
-    changeOctave(key)
+    changeOctave(key);
   }
 });
 
