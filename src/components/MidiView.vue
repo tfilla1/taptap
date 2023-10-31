@@ -6,7 +6,7 @@ import { onMounted, Ref, ref } from "vue";
 import { useAppStore } from "@/store/app";
 import { white_keys, black_keys, mod_keys } from "@/utils/keyboard";
 
-import anime, { AnimeParams, AnimeTimelineInstance } from "animejs";
+import anime, { AnimeTimelineInstance } from "animejs";
 
 const appStore = useAppStore();
 
@@ -14,9 +14,6 @@ const keys = [white_keys, black_keys, mod_keys].flat();
 const octave: Ref<number> = ref(2);
 const pinos = computed(() => appStore.getSounds);
 const midi: Ref<MIDIAccess> = ref({} as MIDIAccess); // global MIDIAccess object
-// const inputDisplay: Ref<MIDIAccess> = ref({} as MIDIAccess); // global MIDIAccess object
-// const outputDisplay: Ref<MIDIAccess> = ref({} as MIDIAccess); // global MIDIAccess object
-// const eventDisplay: Ref<MIDIAccess> = ref({} as MIDIAccess);
 
 const timeline = ref({} as AnimeTimelineInstance);
 
@@ -26,13 +23,13 @@ const onMIDISuccess = (midiAccess: MIDIAccess) => {
 
   midi.value = midiAccess;
 
-  const innout = listInputsAndOutputs(midiAccess);
+  const { input, output } = listInputsAndOutputs(midiAccess);
 
-  subtitle.value = `Connected: ${innout.input.manufacturer}  ${innout.input.name}`;
+  subtitle.value = `Connected: ${input.manufacturer}  ${input.name}`;
   // content.value = innout.thingInput;
 
-  console.log({ innout });
-  startLoggingMIDIInput(midiAccess, innout.input?.id);
+  console.log({ input, output });
+  startLoggingMIDIInput(midiAccess, input?.id);
 };
 
 const onMIDIFailure = (msg: any) => {
@@ -40,35 +37,6 @@ const onMIDIFailure = (msg: any) => {
   subtitle.value = "failed to connect to midi device";
 };
 
-function onMIDIMessage(event: any) {
-  let str = `MIDI message received at timestamp ${event.timeStamp}[${event.data} bytes]: `;
-  console.log({ data: event.data[1] });
-
-  let midiKey = event.data[1];
-  let notes = pinos.value.map((p) => p.note);
-  const octave = Math.floor(midiKey / 12) - 1;
-  const note = notes[midiKey % 12];
-
-  let playNote = pinos.value.find((p) => p.note == note)?.pitches;
-  let soundNote = playNote?.filter((p) => p.octave === octave);
-  // return note + octave;
-  console.log({ something: event.data[1] % 12 });
-  console.log({ asdf: event.data[0] });
-
-  console.log({ note2Play: note + "" + octave, playNote, soundNote });
-  // 144: noteOn
-  // 128: noteOff
-  const something = playTheNote(note as string[], octave);
-  if (something) {
-    something[0].sound.play();
-  }
-  for (const character of event.data) {
-    console.log({ character });
-    str += `0x${character.toString(16)} `;
-  }
-  console.log(str);
-  return event.data;
-}
 
 const playTheNote = (note: string[], octave: number) => {
   console.log(note);
@@ -89,34 +57,6 @@ const startLoggingMIDIInput = (
     entry.onmidimessage = onMIDIMessage;
   });
 };
-
-// const listInputsAndOutputs = (midiAccess: any) => {
-//   let thingInput = midiAccess.inputs.forEach((entry:any) => entry).join()
-//   // .forEach((entry) => {
-//   //   const input = entry;
-//   //   console.log({entry})
-//   //   console.log(
-//   //     `Input port [type:'${input.type}']` +
-//   //       ` id:'${input.id}'` +
-//   //       ` manufacturer:'${input.manufacturer}'` +
-//   //       ` name:'${input.name}'` +
-//   //       ` version:'${input.version}'`
-//   //   );
-//   //   return input;
-//   // });
-
-//   let thingOutput = midiAccess.outputs
-//   // .forEach((entry) => {
-//   //   const output = entry;
-//   //   console.log(
-//   //     `Output port [type:'${output.type}'] id:'${output.id}' manufacturer:'${output.manufacturer}' name:'${output.name}' version:'${output.version}'`
-//   //   );
-//   //   return output;
-//   // });
-
-//   console.log({thingOutput})
-//   return { thingInput, thingOutput };
-// };
 
 function listInputsAndOutputs(midiAccess: any) {
   const returnObject = {} as any;
@@ -143,33 +83,6 @@ function listInputsAndOutputs(midiAccess: any) {
   return returnObject;
 }
 
-// onMounted(() => {
-//   navigator.requestMIDIAccess().then((access: any) => {
-//     // Get lists of available MIDI controllers
-//     const inputs = access.inputs;
-//     inputDisplay.value = inputs.forEach((x) => x);
-//     const outputs = access.outputs;
-//     outputDisplay.value = outputs.forEach((x) => x);
-
-//     access.onstatechange = (event: any) => {
-//       // Print information about the (dis)connected MIDI controller
-//       eventDisplay.value = event;
-//       console.log({ event });
-//       // console.log(event.port?.name, event.port.manufacturer, event.port.state);
-//     };
-//   });
-// });
-
-navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
-// navigator.requestMIDIAccess().then((midiAccess: any) => {
-//   Array.from(midiAccess.inputs).forEach((input: any) => {
-//     input[1].onmidimessage = (msg: any) => {
-//       // console.log(msg);
-//       console.log(msg.data);
-//     };
-//   });
-// });
-
 const addSomething = (target: string, color: string) => {
   console.log(target);
   timeline.value = anime
@@ -191,7 +104,7 @@ const addSomething = (target: string, color: string) => {
       // easing: "cubicBezier(.35,.94,.61,.27)",
       loop: true,
       // scale: anime.stagger([1, 4, 1, 4, 1], { from: "center" }),
-      delay: anime.stagger(1000, { start: 0 }),
+      delay: anime.stagger(1000, { start: 0 })
     });
 };
 
@@ -210,16 +123,27 @@ const changeOctave = (key: string) => {
     octave.value = 1;
   }
 };
-const start = () => {
-  timeline.value.play();
-};
-const pause = () => {
-  timeline.value.pause();
-};
-const restart = () => {
-  timeline.value.restart();
-};
 
+const onMIDIMessage = (event: any) => {
+  let midiKey = event.data[1];
+  let notes = pinos.value.map((p) => p.note);
+  const octave = Math.floor(midiKey / 12) - 1;
+  const note = notes[midiKey % 12];
+
+  let playNote = pinos.value.find((p) => p.note == note)?.pitches;
+  let soundNote = playNote?.filter((p) => p.octave === octave);
+
+  console.log({ note2Play: note + "" + octave, playNote, soundNote });
+  // 144: noteOn
+  // 128: noteOff
+  const noteOn = event.data[0] === 144;
+  const something = playTheNote(note as string[], octave);
+  if (something && noteOn) {
+    something[0].sound.play();
+  }
+
+  return event.data;
+}
 onKeyDown(keys, (e: KeyboardEvent) => {
   const key = e.key;
 
@@ -248,15 +172,15 @@ onKeyDown(keys, (e: KeyboardEvent) => {
   }
 });
 
+navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
+
+
 const title = ref("helllo");
 const subtitle = ref("Please connect your MIDI device to begin");
 const content = ref("here is some content");
 </script>
 
 <template>
-  <!-- <v-card :title="keyba
-    ">{{ keyba }}</v-card> -->
-
   <v-card
     :title="title"
     :subtitle="subtitle"
@@ -289,28 +213,8 @@ const content = ref("here is some content");
         >
           {{ typeof p.note === "string" ? p.note : p.note.join("/") }}
         </div>
-        <!-- <v-btn
-          class="bg-primary mx-2"
-          @click="
-            addSomething(
-              typeof p.note === 'string'
-                ? p.note.replace('#', 'S')
-                : p.note.join('').replace('#', 'S'), p.color
-            )
-          "
-        >
-          {{ typeof p.note === "string" ? p.note : p.note.join("/") }}</v-btn
-        > -->
       </div>
     </div>
-    <!-- <pre>{{ midi }}</pre>
-        <pre>{{ inputDisplay }}</pre>
-      <pre>{{ outputDisplay }}</pre>
-      <pre>{{ eventDisplay }}</pre> -->
-    <!-- <pre>{{ content }}</pre> -->
-    <!-- <v-card-text>
-
-    </v-card-text> -->
   </v-card>
 </template>
 
