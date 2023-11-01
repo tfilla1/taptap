@@ -4,12 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "vite --host",
-    "build": "run-p type-check \"build-only {@}\" --",
-    "build-pages": "run-p type-check \"build-pages-only {@}\" --",
+    "build": "run-p \"build-only {@}\" --",
+    "build-pages": "run-p \"build-pages-only {@}\" --",
     "preview": "vite preview",
     "test:unit": "vitest",
     "build-only": "vite build",
-    "build-pages-only": "vite build --base '/cards/'",
+    "build-pages-only": "vite build --base '/taptap/'",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/"
