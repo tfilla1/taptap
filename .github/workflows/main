@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - main
+      - tfilla1/gh-pages
 
 jobs:
   deploy-pages:
@@ -15,12 +16,10 @@ jobs:
         uses: actions/checkout@v2
       - name: Install node dependencies
         run: npm install
-        working-directory: ./
       - name: Build site
         run: npm run build-pages
-        working-directory: ./
       - name: Copy dist folder to temporary folder used for github pages
-        run: cp -r ./src/apps/cards/dist _site
+        run: cp -r ./dist _site
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v2.0.0
         with:
