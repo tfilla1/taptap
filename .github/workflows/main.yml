@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - main
+      # - main
       - tfilla1/gh-pages
 
 jobs:

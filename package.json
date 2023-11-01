@@ -4,9 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "vite --host",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "run-p type-check \"build-only {@}\" --",
+    "build-pages": "run-p type-check \"build-pages-only {@}\" --",
     "preview": "vite preview",
-    "lint": "eslint . --fix --ignore-path .gitignore"
+    "test:unit": "vitest",
+    "build-only": "vite build",
+    "build-pages-only": "vite build --base '/cards/'",
+    "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "format": "prettier --write src/"
   },
   "dependencies": {
     "@mdi/font": "7.0.96",
