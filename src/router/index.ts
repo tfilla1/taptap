@@ -20,10 +20,11 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes,
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes
 })
 router.afterEach((to) => {
+  console.log(import.meta.env.BASE_URL)
   document.title = to.meta.title as string || 'taptap'
 })
 export default router
