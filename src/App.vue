@@ -8,6 +8,8 @@ import { useAppStore } from './store/app';
 
   //
   onMounted(() => {
-    useAppStore().loadSounds()
+    useAppStore().loadPianoSounds()
+
+    console.log({something: import.meta.env})
   })
 </script>

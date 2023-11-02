@@ -1,6 +1,6 @@
 // Utilities
 import { defineStore } from 'pinia'
-import { pino } from '@/assets/keyboard/pino'
+import { pino } from '@/data/soundboards/pino'
 import bubbleSound from '@/assets/sounds/bubbles.mp3';
 import claySound from '@/assets/sounds/clay.mp3';
 import confettiSound from '@/assets/sounds/confetti.mp3';
@@ -34,9 +34,12 @@ export const useAppStore = defineStore('app', {
     sounds: [] as Pino[]
   }),
   actions: {
-    loadSounds() {
+    loadPianoSounds() {
       this.sounds = pino
 
+
+    },
+    loadPTapSounds() {
       // this.sounds = [
       //   bubbleSound,
       //   claySound,
@@ -65,7 +68,6 @@ export const useAppStore = defineStore('app', {
       //   wipeSound,
       //   zigZagSound
       // ]
-
       // this.sounds = ['@/assets/sounds/bubbles.mp3', '../assets/sounds/clay.mp3',
       //   'assets/sounds/confetti.mp3', 'assets/sounds/corona.mp3', 'assets/sounds/dotted-spiral.mp3',
       //   'assets/sounds/flash-1.mp3', 'assets/sounds/flash-2.mp3', 'assets/sounds/flash-3.mp3',
@@ -76,6 +78,7 @@ export const useAppStore = defineStore('app', {
       //   'assets/sounds/suspension.mp3', 'assets/sounds/timer.mp3', 'assets/sounds/ufo.mp3',
       //   'assets/sounds/veil.mp3', 'assets/sounds/wipe.mp3', 'assets/sounds/zig-zag.mp3'
       // ];
+
     }
   },
   getters: {
