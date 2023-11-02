@@ -5,7 +5,7 @@ export const pino: Pino[] = [
     note: "C",
     key: ['a', 'A', 'k', 'K'],
     color: "#EB3F33",
-    sound: [
+    pitches: [
       {
         octave: 1,
         source: `${import.meta.env.VITE_SOUNDS_DIR}/piano/_ C 1-1.mp3`,
@@ -44,7 +44,7 @@ export const pino: Pino[] = [
     note: ["C#", "Db"],
     key: ['w', 'W', 'o', 'O'],
     color: "#F28500",
-    sound: [
+    pitches: [
       {
         octave: 1,
         source: `${import.meta.env.VITE_SOUNDS_DIR}/piano/_ CS_Db 1-1.mp3`,
@@ -79,7 +79,7 @@ export const pino: Pino[] = [
     note: "D",
     key: ['s', 'S', 'l', 'L'],
     color: "#F28500",
-    sound: [
+    pitches: [
       {
         octave: 1,
         source: `${import.meta.env.VITE_SOUNDS_DIR}/piano/_ D 1-1.mp3`,
@@ -113,9 +113,9 @@ export const pino: Pino[] = [
   {
     note: ["D#", "Eb"],
     key: ['e', 'E'],
-    semitone: true,
+    enharmonics: true,
     color: "#FFEE00",
-    sound: [
+    pitches: [
       {
         octave: 1,
         source: `${import.meta.env.VITE_SOUNDS_DIR}/piano/_ DS_Eb 1-1.mp3`,
@@ -150,7 +150,7 @@ export const pino: Pino[] = [
     note: "E",
     key: ['d', 'D'],
     color: "#FFEE00",
-    sound: [
+    pitches: [
       {
         octave: 1,
         source: `${import.meta.env.VITE_SOUNDS_DIR}/piano/_ E 1-1.mp3`,
@@ -185,7 +185,7 @@ export const pino: Pino[] = [
     note: "F",
     key: ['f', 'F'],
     color: "#16A22D",
-    sound: [
+    pitches: [
       {
         octave: 1,
         source: `${import.meta.env.VITE_SOUNDS_DIR}/piano/_ F 1-1.mp3`,
@@ -219,9 +219,9 @@ export const pino: Pino[] = [
   {
     note: ["F#", "Gb"],
     key: ['t', 'T'],
-    semitone: true,
+    enharmonics: true,
     color: "#0000E0",
-    sound: [
+    pitches: [
       {
         octave: 1,
         source: `${import.meta.env.VITE_SOUNDS_DIR}/piano/_ FS_Gb 1-1.mp3`,
@@ -256,7 +256,7 @@ export const pino: Pino[] = [
     note: "G",
     key: ['g', 'G'],
     color: "#0000E0",
-    sound: [
+    pitches: [
       {
         octave: 1,
         source: `${import.meta.env.VITE_SOUNDS_DIR}/piano/_ G 1-1.mp3`,
@@ -290,9 +290,9 @@ export const pino: Pino[] = [
   {
     note: ["G#", "Ab"],
     key: ['y', 'Y'],
-    semitone: true,
+    enharmonics: true,
     color: "#7C43B1",
-    sound: [
+    pitches: [
       {
         octave: 1,
         source: `${import.meta.env.VITE_SOUNDS_DIR}/piano/_ GS_Ab 1-1.mp3`,
@@ -327,7 +327,7 @@ export const pino: Pino[] = [
     note: "A",
     key: ['h', 'H'],
     color: "#7C43B1",
-    sound: [
+    pitches: [
       {
         octave: 0,
         source: `${import.meta.env.VITE_SOUNDS_DIR}/piano/_ A 0-1.mp3`,
@@ -365,9 +365,9 @@ export const pino: Pino[] = [
   {
     note: ["A#", "Bb"],
     key: ['u', 'U'],
-    semitone: true,
+    enharmonics: true,
     color: "#F976A6",
-    sound: [
+    pitches: [
       {
         octave: 0,
         source: `${import.meta.env.VITE_SOUNDS_DIR}/piano/_ AS_Bb 0-1.mp3`,
@@ -406,7 +406,7 @@ export const pino: Pino[] = [
     note: "B",
     key: ['j', 'J'],
     color: "#F976A6",
-    sound: [
+    pitches: [
       {
         octave: 0,
         source: `${import.meta.env.VITE_SOUNDS_DIR}/piano/_ B 0-1.mp3`,

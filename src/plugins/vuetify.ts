@@ -10,9 +10,24 @@ import 'vuetify/styles'
 
 // Composables
 import { createVuetify } from 'vuetify'
-
+import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
+import { mdiMinus, mdiPiano, mdiPlus, mdiWeatherNight, mdiWeatherSunny } from '@mdi/js'
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
+  icons: {
+    aliases: {
+      ...aliases,
+      dark: mdiWeatherNight,
+      light: mdiWeatherSunny,
+      logo: mdiPiano,
+      minus: mdiMinus,
+      plus: mdiPlus,
+    },
+    defaultSet: 'mdi',
+    sets: {
+      mdi
+    }
+  },
   theme: {
     themes: {
       light: {
