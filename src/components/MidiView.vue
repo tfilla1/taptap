@@ -25,7 +25,8 @@ const onMIDISuccess = (midiAccess: MIDIAccess) => {
 
   const { input, output } = listInputsAndOutputs(midiAccess);
 
-  subtitle.value = `Connected: ${input.manufacturer}  ${input.name}`;
+  if (input !== 'something')
+    subtitle.value = `Connected: ${input.manufacturer}  ${input.name}`;
   // content.value = innout.thingInput;
 
   console.log({ input, output });
@@ -36,7 +37,6 @@ const onMIDIFailure = (msg: any) => {
   console.error(`Failed to get MIDI access - ${msg}`);
   subtitle.value = "failed to connect to midi device";
 };
-
 
 const playTheNote = (note: string[], octave: number) => {
   console.log(note);
@@ -49,7 +49,7 @@ const playTheNote = (note: string[], octave: number) => {
 
 const startLoggingMIDIInput = (
   midiAccess: MIDIAccess,
-  indexOfPort: MIDIPort
+  indexOfPort: MIDIPort,
 ) => {
   console.log(indexOfPort);
 
@@ -65,14 +65,14 @@ function listInputsAndOutputs(midiAccess: any) {
   for (const entry of midiAccess.inputs) {
     input = entry[1];
     console.log(
-      `Input port [type:'${input.type}'] id:'${input.id}' manufacturer: '${input.manufacturer}' name: '${input.name}' version: '${input.version}'`
+      `Input port [type:'${input.type}'] id:'${input.id}' manufacturer: '${input.manufacturer}' name: '${input.name}' version: '${input.version}'`,
     );
   }
 
   for (const entry of midiAccess.outputs) {
     output = entry[1];
     console.log(
-      `Output port [type:'${output.type}'] id: '${output.id}' manufacturer: '${output.manufacturer}' name: '${output.name}' version: '${output.version}'`
+      `Output port [type:'${output.type}'] id: '${output.id}' manufacturer: '${output.manufacturer}' name: '${output.name}' version: '${output.version}'`,
     );
   }
 
@@ -104,7 +104,7 @@ const addSomething = (target: string, color: string) => {
       // easing: "cubicBezier(.35,.94,.61,.27)",
       loop: true,
       // scale: anime.stagger([1, 4, 1, 4, 1], { from: "center" }),
-      delay: anime.stagger(1000, { start: 0 })
+      delay: anime.stagger(1000, { start: 0 }),
     });
 };
 
@@ -124,6 +124,10 @@ const changeOctave = (key: string) => {
   }
 };
 
+const restart = () => {
+  console.log('restart')
+}
+
 const onMIDIMessage = (event: any) => {
   let midiKey = event.data[1];
   let notes = pinos.value.map((p) => p.note);
@@ -139,11 +143,17 @@ const onMIDIMessage = (event: any) => {
   const noteOn = event.data[0] === 144;
   const something = playTheNote(note as string[], octave);
   if (something && noteOn) {
+    addSomething(
+      typeof note === "string"
+        ? note.replace("#", "S")
+        : note.join("").replace("#", "S"),
+      pinos.value.find((p) => p.note === note)!.color,
+    );
     something[0].sound.play();
   }
 
   return event.data;
-}
+};
 onKeyDown(keys, (e: KeyboardEvent) => {
   const key = e.key;
 
@@ -162,7 +172,7 @@ onKeyDown(keys, (e: KeyboardEvent) => {
         typeof pino?.note === "string"
           ? pino.note.replace("#", "S")
           : pino!.note.join("").replace("#", "S"),
-        pino!.color
+        pino!.color,
       );
       console.log({ source: source[0] });
       source[0].sound.play();
@@ -174,9 +184,8 @@ onKeyDown(keys, (e: KeyboardEvent) => {
 
 navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
 
-
-const title = ref("helllo");
-const subtitle = ref("Please connect your MIDI device to begin");
+const title = ref("Use Buttons to Change Octave");
+const subtitle = ref("Connect MIDI device if you desire");
 const content = ref("here is some content");
 </script>
 
@@ -189,7 +198,16 @@ const content = ref("here is some content");
     width="800"
   >
     <template #append>
-      {{ octave }}
+      <div class="d-flex">
+        <div>
+          <v-btn icon="$minus" variant="flat" @click="octave--"></v-btn>
+          {{ octave }}
+          <v-btn icon="$plus" variant="flat" @click="octave++"></v-btn>
+        </div>
+        <div>
+          <v-btn variant="elevated" class="bg-primary" @click="restart">activate pino</v-btn>
+        </div>
+      </div>
     </template>
     <div class="d-flex">
       <div

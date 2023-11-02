@@ -10,19 +10,13 @@ const routes = [
       {
         path: '',
         name: 'home',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
-        component: () => import(/* webpackChunkName: "home" */ '@/views/Home.vue'),
+        component: () => import(/* webpackChunkName: "home" */ '@/components/MidiView.vue'),
       },
       {
-        path: 'midi',
-        name: 'midi',
-        title: 'MIDI Testing Kit',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
-        component: () => import(/* webpackChunkName: "home" */ '@/components/MidiView.vue'),
+        path: 'canvas',
+        name: 'canvas',
+        title: 'Canvas Test Kit',
+        component: () => import(/* webpackChunkName: "home" */ '@/views/Home.vue'),
       },
       {
         path: 'animations',
@@ -43,6 +37,7 @@ const router = createRouter({
 })
 router.afterEach((to) => {
   console.log(import.meta.env.BASE_URL)
+  console.log({env: import.meta.env})
   document.title = to.meta.title as string || 'taptap'
 })
 export default router
