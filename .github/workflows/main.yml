@@ -2,7 +2,6 @@ on:
   push:
     branches:
       - main
-      - tfilla1/gh-pages
 
 jobs:
   deploy-pages:
@@ -20,6 +19,8 @@ jobs:
         run: npm run build-pages
       - name: Copy dist folder to temporary folder used for github pages
         run: cp -r ./dist _site
+      - name: Copy assets folder to dist folder
+        run: cp -r ./src/assets/sounds _site/assets/sounds
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v2.0.0
         with:
