@@ -12,8 +12,17 @@ const appStore = useAppStore();
 
 const keys = [white_keys, black_keys, mod_keys].flat();
 const octave: Ref<number> = ref(2);
+const showOctave: Ref<boolean> = ref(true);
 const pinos = computed(() => appStore.getSounds);
 const midi: Ref<MIDIAccess> = ref({} as MIDIAccess); // global MIDIAccess object
+
+const selectedSoundboard = computed(() => appStore.selectedSoundboard);
+const soundboardOptions = computed(() => appStore.getSoundboards);
+const toggleSoundboard = () => {
+  const selected = appStore.setSelectedSoundboard();
+  octave.value = selected.key === 'taptap' ? 1 : octave.value
+  showOctave.value = selected.key !== 'taptap'
+};
 
 const timeline = ref({} as AnimeTimelineInstance);
 
@@ -25,7 +34,7 @@ const onMIDISuccess = (midiAccess: MIDIAccess) => {
 
   const { input, output } = listInputsAndOutputs(midiAccess);
 
-  if (input !== 'something')
+  if (input !== "something")
     subtitle.value = `Connected: ${input.manufacturer}  ${input.name}`;
   // content.value = innout.thingInput;
 
@@ -125,8 +134,8 @@ const changeOctave = (key: string) => {
 };
 
 const restart = () => {
-  console.log('restart')
-}
+  console.log("restart");
+};
 
 const onMIDIMessage = (event: any) => {
   let midiKey = event.data[1];
@@ -158,7 +167,7 @@ onKeyDown(keys, (e: KeyboardEvent) => {
   const key = e.key;
 
   const pino = pinos.value.find((p) => p.key?.includes(key));
-
+  console.log({pino})
   if (pino) {
     const source = pino?.pitches
       .filter((s) => s.octave === octave.value)
@@ -184,7 +193,7 @@ onKeyDown(keys, (e: KeyboardEvent) => {
 
 navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
 
-const title = ref("Use Buttons to Change Octave");
+const title = computed(() => selectedSoundboard.value.key) //ref("Use Buttons to Change Octave");
 const subtitle = ref("Connect MIDI device if you desire");
 const content = ref("here is some content");
 </script>
@@ -200,12 +209,21 @@ const content = ref("here is some content");
     <template #append>
       <div class="d-flex">
         <div>
+          <v-btn
+            variant="flat"
+            @click="toggleSoundboard"
+            :icon="selectedSoundboard.icon"
+          ></v-btn>
+        </div>
+        <div v-if="showOctave">
           <v-btn icon="$minus" variant="flat" @click="octave--"></v-btn>
           {{ octave }}
           <v-btn icon="$plus" variant="flat" @click="octave++"></v-btn>
         </div>
         <div>
-          <v-btn variant="elevated" class="bg-primary" @click="restart">activate pino</v-btn>
+          <v-btn variant="elevated" class="bg-primary" @click="restart"
+            >activate pino</v-btn
+          >
         </div>
       </div>
     </template>
@@ -213,7 +231,7 @@ const content = ref("here is some content");
       <div
         v-for="(p, index) in pinos"
         class="d-flex flex-column mx-2"
-        :class="p.enharmonics ? 'enharmonic' : 'non-enharmonic'"
+        :class="p.enharmonics ? 'enharmonic pa-4' : 'non-enharmonic'"
         :key="index"
         :style="{
           backgroundColor: p.color,
@@ -238,8 +256,8 @@ const content = ref("here is some content");
 
 <style>
 .enharmonic {
-  height: 40px;
-  width: 50px;
+  height: 25px;
+  width: 35px;
 }
 .non-enharmonic {
   height: 60px;
