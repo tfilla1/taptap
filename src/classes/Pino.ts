@@ -1,4 +1,4 @@
-class Pitch {
+export class Pitch {
   octave: number;
   source: string;
   constructor(octave: number, source: string) {
@@ -7,7 +7,7 @@ class Pitch {
   }
 }
 
-export default class Pino {
+export class Pino {
   pitches: Pitch[];
   note: string | string[];
   color: string;

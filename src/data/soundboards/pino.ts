@@ -1,4 +1,27 @@
-import Pino from "@/classes/Pino";
+import { Pino } from "@/classes/Pino";
+
+class KeySignature {
+  root?: string
+  colors?: string[]
+
+  constructor (root?: string, colors?: string[]) {
+    this.root = root ?? ''
+    this.colors = colors ?? []
+  }
+}
+
+const rootColors = {
+  root: 'C',
+  colors: [
+    "#EB3F33",
+    "#F28500",
+    "#FFEE00",
+    "#16A22D",
+    "#0000E0",
+    "#7C43B1",
+    "#F976A6",
+  ]
+}
 
 export const pino: Pino[] = [
   {
@@ -44,6 +67,7 @@ export const pino: Pino[] = [
     note: ["C#", "Db"],
     key: ['w', 'W', 'o', 'O'],
     color: "#F28500",
+    enharmonics: true,
     pitches: [
       {
         octave: 1,
