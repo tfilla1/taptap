@@ -1,30 +1,18 @@
 <script lang="ts" setup>
-import { Howl, Howler } from "howler";
-import { onKeyDown } from "@vueuse/core";
-import { computed } from "vue";
-import { onMounted, Ref, ref } from "vue";
+import { computed, ref, Ref } from "vue";
 import { useAppStore } from "@/store/app";
-import { white_keys, black_keys, mod_keys } from "@/utils/keyboard";
 
 import anime, { AnimeTimelineInstance } from "animejs";
 
-const appStore = useAppStore();
+import { convertMidiToNote } from "@/utils/convertMidiToNote";
+import { createAnimation } from "@/utils/createAnimation";
 
-const keys = [white_keys, black_keys, mod_keys].flat();
-const octave: Ref<number> = ref(2);
-const showOctave: Ref<boolean> = ref(true);
-const pinos = computed(() => appStore.getSounds);
 const midi: Ref<MIDIAccess> = ref({} as MIDIAccess); // global MIDIAccess object
 
-const selectedSoundboard = computed(() => appStore.selectedSoundboard);
-const soundboardOptions = computed(() => appStore.getSoundboards);
-const toggleSoundboard = () => {
-  const selected = appStore.setSelectedSoundboard();
-  octave.value = selected.key === 'taptap' ? 1 : octave.value
-  showOctave.value = selected.key !== 'taptap'
-};
-
-const timeline = ref({} as AnimeTimelineInstance);
+const appStore = useAppStore();
+const pinos = computed(() => appStore.getSounds);
+const title = ref("midi devices");
+const subtitle = ref("");
 
 const onMIDISuccess = (midiAccess: MIDIAccess) => {
   console.log("MIDI ready!");
@@ -47,12 +35,15 @@ const onMIDIFailure = (msg: any) => {
   subtitle.value = "failed to connect to midi device";
 };
 
-const playTheNote = (note: string[], octave: number) => {
+const playTheNote = (note: string, octave: number) => {
   console.log(note);
   let playNote = pinos.value.find((p) => p.note == note)?.pitches;
   let soundNote = playNote?.filter((p) => p.octave === octave);
   return soundNote
-    ?.map((s) => ({ source: s.source, sound: new Howl({ src: [s.source] }) }))
+    ?.map((s) => ({
+      source: s.source,
+      sound: new Howl({ src: [s.source] }),
+    }))
     .flat(2);
 };
 
@@ -92,200 +83,39 @@ function listInputsAndOutputs(midiAccess: any) {
   return returnObject;
 }
 
-const addSomething = (target: string, color: string) => {
-  console.log(target);
-  timeline.value = anime
-    .timeline({
-      easing: "easeOutExpo",
-      duration: 1500,
-      loop: false,
-    })
-    .add({
-      targets: "." + target,
-      backgroundColor: [color, color],
-      translateY: [100, 200, 300, 400, 1200],
-      // height: [40, 50, 600, 70, 85, 5000],
-      // translateX: [0, 250, 450, 250, 0],
-      // rotate: [0, 180, 0, 180, 0],
-      // opacity: 1,
-      duration: 3500,
-      scaleY: [2, 4, 8, 16],
-      // easing: "cubicBezier(.35,.94,.61,.27)",
-      loop: true,
-      // scale: anime.stagger([1, 4, 1, 4, 1], { from: "center" }),
-      delay: anime.stagger(1000, { start: 0 }),
-    });
-};
-
-const minOctave = 1;
-const maxOctave = 7;
-const changeOctave = (key: string) => {
-  if (key === "z") {
-    octave.value--;
-  } else if (key === "x") {
-    octave.value++;
-  }
-  if (octave.value < minOctave) {
-    octave.value = 7;
-  }
-  if (octave.value > maxOctave) {
-    octave.value = 1;
-  }
-};
-
-const restart = () => {
-  console.log("restart");
-};
-
 const onMIDIMessage = (event: any) => {
   let midiKey = event.data[1];
-  let notes = pinos.value.map((p) => p.note);
-  const octave = Math.floor(midiKey / 12) - 1;
-  const note = notes[midiKey % 12];
+  let { octave, note } = convertMidiToNote(midiKey as number);
 
-  let playNote = pinos.value.find((p) => p.note == note)?.pitches;
+  let playNote = pinos.value.find((p) => p.note === note)?.pitches;
+  let colorNote = pinos.value.find((p) => p.note === note)!.color;
   let soundNote = playNote?.filter((p) => p.octave === octave);
 
   console.log({ note2Play: note + "" + octave, playNote, soundNote });
   // 144: noteOn
   // 128: noteOff
   const noteOn = event.data[0] === 144;
-  const something = playTheNote(note as string[], octave);
+  const something = playTheNote(note, octave);
   if (something && noteOn) {
-    addSomething(
-      typeof note === "string"
-        ? note.replace("#", "S")
-        : note.join("").replace("#", "S"),
-      pinos.value.find((p) => p.note === note)!.color,
+    anime(
+      createAnimation(
+        note,
+        typeof colorNote === "object" ? colorNote[0] : colorNote,
+      ),
     );
+
     something[0].sound.play();
   }
 
   return event.data;
 };
-onKeyDown(keys, (e: KeyboardEvent) => {
-  const key = e.key;
-
-  const pino = pinos.value.find((p) => p.key?.includes(key));
-  console.log({pino})
-  if (pino) {
-    const source = pino?.pitches
-      .filter((s) => s.octave === octave.value)
-      .map((s) => ({ source: s.source, sound: new Howl({ src: [s.source] }) }))
-      .flat(2);
-
-    // find((s) => s.octave === octave.value)?.source;
-
-    if (source) {
-      addSomething(
-        typeof pino?.note === "string"
-          ? pino.note.replace("#", "S")
-          : pino!.note.join("").replace("#", "S"),
-        pino!.color,
-      );
-      console.log({ source: source[0] });
-      source[0].sound.play();
-    }
-  } else {
-    changeOctave(key);
-  }
-});
 
 navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
 
-const title = computed(() => selectedSoundboard.value.key) //ref("Use Buttons to Change Octave");
-const subtitle = ref("Connect MIDI device if you desire");
-const content = ref("here is some content");
+const midiDevices = ref(["1", "2"]);
+const selectedMidiDevice = ref();
 </script>
 
 <template>
-  <v-card
-    :title="title"
-    :subtitle="subtitle"
-    class="d-flex flex-column"
-    height="500"
-    width="800"
-  >
-    <template #append>
-      <div class="d-flex">
-        <div>
-          <v-btn
-            variant="flat"
-            @click="toggleSoundboard"
-            :icon="selectedSoundboard.icon"
-          ></v-btn>
-        </div>
-        <div v-if="showOctave">
-          <v-btn icon="$minus" variant="flat" @click="octave--"></v-btn>
-          {{ octave }}
-          <v-btn icon="$plus" variant="flat" @click="octave++"></v-btn>
-        </div>
-        <div>
-          <v-btn variant="elevated" class="bg-primary" @click="restart"
-            >activate pino</v-btn
-          >
-        </div>
-      </div>
-    </template>
-    <div class="d-flex">
-      <div
-        v-for="(p, index) in pinos"
-        class="d-flex flex-column mx-2"
-        :class="p.enharmonics ? 'enharmonic pa-4' : 'non-enharmonic'"
-        :key="index"
-        :style="{
-          backgroundColor: p.color,
-          border: p.enharmonics ? '1px solid black' : '',
-        }"
-        height="500"
-      >
-        <div
-          class="item"
-          :class="
-            typeof p.note === 'string'
-              ? p.note.replace('#', 'S')
-              : p.note.join('').replace('#', 'S')
-          "
-        >
-          {{ typeof p.note === "string" ? p.note : p.note.join("/") }}
-        </div>
-      </div>
-    </div>
-  </v-card>
+  <v-card :title="title" height="500"></v-card>
 </template>
-
-<style>
-.enharmonic {
-  height: 25px;
-  width: 35px;
-}
-.non-enharmonic {
-  height: 60px;
-  width: 50px;
-}
-.letter {
-  display: inline-block;
-  opacity: 0;
-  top: 0;
-  left: 0;
-}
-.d-none {
-  display: none;
-}
-.pa-1 {
-  padding: 15px;
-}
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-.item {
-  /* background-color: #ff00aa; */
-  width: 50px;
-  height: 50px;
-}
-</style>

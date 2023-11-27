@@ -1,6 +1,6 @@
-import Pino from "@/classes/Pino";
+import { Pino } from "@/classes/Pino";
 
-export const pino: Pino[] = [
+export const pianoData: Pino[] = [
   {
     note: "C",
     key: ['a', 'A', 'k', 'K'],
@@ -37,13 +37,15 @@ export const pino: Pino[] = [
       {
         octave: 8,
         source: `${import.meta.env.VITE_SOUNDS_DIR}/piano/_ C 8-1.mp3`,
+        // source: `${import.meta.env.VITE_SOUNDS_DIR}/piano/_ C 8-1.mp3`,
       },
     ],
   },
   {
-    note: ["C#", "Db"],
+    note: "CS_DB",
     key: ['w', 'W', 'o', 'O'],
-    color: "#F28500",
+    color: ["#F28500", '#EB3F33'],
+    enharmonics: true,
     pitches: [
       {
         octave: 1,
@@ -111,10 +113,10 @@ export const pino: Pino[] = [
     ],
   },
   {
-    note: ["D#", "Eb"],
+    note: "DS_EB",
     key: ['e', 'E'],
     enharmonics: true,
-    color: "#FFEE00",
+    color: ["#FFEE00", '#F28500'],
     pitches: [
       {
         octave: 1,
@@ -217,10 +219,10 @@ export const pino: Pino[] = [
     ],
   },
   {
-    note: ["F#", "Gb"],
+    note: "FS_GB",
     key: ['t', 'T'],
     enharmonics: true,
-    color: "#0000E0",
+    color: ["#0000E0", '#16A22D'],
     pitches: [
       {
         octave: 1,
@@ -288,10 +290,10 @@ export const pino: Pino[] = [
     ],
   },
   {
-    note: ["G#", "Ab"],
+    note: "GS_AB",
     key: ['y', 'Y'],
     enharmonics: true,
-    color: "#7C43B1",
+    color: ["#7C43B1", '#0000E0'],
     pitches: [
       {
         octave: 1,
@@ -363,10 +365,10 @@ export const pino: Pino[] = [
     ],
   },
   {
-    note: ["A#", "Bb"],
+    note: "AS_BB",
     key: ['u', 'U'],
     enharmonics: true,
-    color: "#F976A6",
+    color: ["#F976A6", "#7C43B1"],
     pitches: [
       {
         octave: 0,
