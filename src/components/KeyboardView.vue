@@ -5,7 +5,7 @@ import { computed } from "vue";
 import { onMounted, Ref, ref } from "vue";
 import { useAppStore } from "@/store/app";
 import { white_keys, black_keys, mod_keys } from "@/utils/keyboard";
-
+import { determineScale } from "@/data/soundboards/taptap";
 import anime, { AnimeTimelineInstance } from "animejs";
 import { createAnimation } from "@/utils/createAnimation";
 
@@ -97,6 +97,10 @@ onKeyDown(keys, (e: KeyboardEvent) => {
     if (key === "z" || key === "x") changeOctave(key);
     if (key === "c" || key === "v") changeScale(key);
   }
+});
+
+onMounted(() => {
+  console.log(determineScale("D", 1));
 });
 </script>
 
