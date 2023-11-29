@@ -5,7 +5,7 @@ import { computed } from "vue";
 import { onMounted, Ref, ref } from "vue";
 import { useAppStore } from "@/store/app";
 import { white_keys, black_keys, mod_keys } from "@/utils/keyboard";
-import { determineScale } from "@/data/soundboards/taptap";
+import { determineScale, notes } from "@/data/soundboards/taptap";
 import anime, { AnimeTimelineInstance } from "animejs";
 import { createAnimation } from "@/utils/createAnimation";
 
@@ -41,15 +41,19 @@ const changeOctave = (key: string) => {
   if (octave.value > maxOctave) octave.value = 1;
 };
 
-const scale = ref(0);
+const scaleIndex = ref(0);
+const scale = ref(determineScale("C", octave.value));
+const scaleDisplay = computed(() => notes[scaleIndex.value]);
 const showScale: Ref<boolean> = ref(true);
 const changeScale = (key: string) => {
-  if (key === "v") scale.value++;
-  else scale.value--;
+  if (key === "v") scaleIndex.value++;
+  else scaleIndex.value--;
 
-  if (scale.value < minOctave) scale.value = 7;
+  if (scaleIndex.value < 0) scaleIndex.value = notes.length - 1;
 
-  if (scale.value > maxOctave) scale.value = 1;
+  if (scaleIndex.value >= notes.length) scaleIndex.value = 0;
+
+  scale.value = determineScale(notes[scaleIndex.value], octave.value);
 };
 onKeyDown(keys, (e: KeyboardEvent) => {
   const key = e.key;
@@ -98,10 +102,6 @@ onKeyDown(keys, (e: KeyboardEvent) => {
     if (key === "c" || key === "v") changeScale(key);
   }
 });
-
-onMounted(() => {
-  console.log(determineScale("D", 1));
-});
 </script>
 
 <template>
@@ -132,7 +132,7 @@ onMounted(() => {
               variant="flat"
               @click="changeScale('c')"
             ></v-btn>
-            {{ scale }}
+            {{ scaleDisplay }}
             <v-btn
               icon="$plus"
               variant="flat"
@@ -141,6 +141,9 @@ onMounted(() => {
           </div>
         </div>
       </div>
+    </template>
+    <template #subtitle>
+      <pre>{{ scale }}</pre>
     </template>
     <div class="d-flex mx-2">
       <div

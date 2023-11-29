@@ -9,7 +9,7 @@ const getColor = (note: string) => {
 }
 
 // key to number % 60 finds the letter to search for
-const notes = ['C', 'CS_DB', 'D', 'DS_EB', 'E', 'F', 'FS_GB', 'G', 'GS_AB', 'A', 'AS_BB', 'B']
+export const notes = ['C', 'CS_DB', 'D', 'DS_EB', 'E', 'F', 'FS_GB', 'G', 'GS_AB', 'A', 'AS_BB', 'B']
 
 const major_scale = [2, 2, 1, 2, 2, 2, 1]
 // [C - D - E - F - G - A - B - C ]
@@ -18,8 +18,8 @@ const octaves = [0, 1, 2, 3, 4, 5, 6, 7]
 
 
 export const determineScale = (root: string, octave: number): string[] => {
-  const board = pino('piano')
-  console.log({ board })
+  // const board = pino('piano')
+  // console.log({ board })
 
   let position = notes.findIndex(note => note === root)
   const newScale: string[] = [notes[position] + '-' + octave]
@@ -35,10 +35,11 @@ export const determineScale = (root: string, octave: number): string[] => {
 
     newScale.push(notes[position] + '-' + octave)
 
-    console.log({ interval, position })
+    console.log({ interval, position, octave })
 
     return notes[position]
   })
+
   return newScale
 }
 
