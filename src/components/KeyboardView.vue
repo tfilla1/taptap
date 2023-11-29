@@ -39,6 +39,8 @@ const changeOctave = (key: string) => {
   if (octave.value < minOctave) octave.value = 7;
 
   if (octave.value > maxOctave) octave.value = 1;
+
+  scale.value = determineScale(notes[scaleIndex.value], octave.value);
 };
 
 const scaleIndex = ref(0);
@@ -143,7 +145,10 @@ onKeyDown(keys, (e: KeyboardEvent) => {
       </div>
     </template>
     <template #subtitle>
-      <pre>{{ scale }}</pre>
+      <div class="text-wrap">
+        {{ scale }}
+      </div>
+      <!-- <pre>{{ scale }}</pre> -->
     </template>
     <div class="d-flex mx-2">
       <div
@@ -164,9 +169,6 @@ onKeyDown(keys, (e: KeyboardEvent) => {
               backgroundColor: color,
             }"
           ></div>
-          {{ p.note[index] }}
-
-          <!-- <div class="item" :class="p.note"></div> -->
         </div>
         <div
           v-else
