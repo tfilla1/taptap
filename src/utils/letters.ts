@@ -1,4 +1,4 @@
-const letters = [
+export const letters = [
   "a",
   "b",
   "c",

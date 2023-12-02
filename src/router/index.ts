@@ -4,18 +4,18 @@ import { createRouter, createWebHistory } from 'vue-router'
 const routes = [
   {
     path: '/',
-    meta: {title: 'taptap - home'},
+    meta: { title: 'taptap - home' },
     component: () => import('@/layouts/default/Default.vue'),
     children: [
       {
-        path: '',
-        name: 'home',
+        path: 'midiview',
+        name: 'midiview',
         component: () => import(/* webpackChunkName: "home" */ '@/components/MidiView.vue'),
       },
       {
-        path: 'canvas',
-        name: 'canvas',
-        title: 'Canvas Test Kit',
+        path: '',
+        name: 'home',
+        title: 'Pino',
         component: () => import(/* webpackChunkName: "home" */ '@/views/Home.vue'),
       },
       {
@@ -37,7 +37,7 @@ const router = createRouter({
 })
 router.afterEach((to) => {
   console.log(import.meta.env.BASE_URL)
-  console.log({env: import.meta.env})
+  console.log({ env: import.meta.env })
   document.title = to.meta.title as string || 'taptap'
 })
 export default router
