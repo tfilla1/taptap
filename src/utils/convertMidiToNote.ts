@@ -1,12 +1,16 @@
-import { pianoData } from '../data/soundboards/pino'
+import { useAppStore } from '@/store/app';
 
 export const convertMidiToNote = (midiKey: number) => {
-  const notes = pianoData.map((p) => p.note);
+  const pino = useAppStore().getSounds
+  const notes = pino.map((p) => p.note);
   const octave = Math.floor(midiKey / 12) - 1;
   const note = notes[midiKey % 12];
 
-  const returnThis = pianoData.find(x => x.note === note && x.pitches.find(p => p.octave === octave))
-  console.log({ octave, note })
-  console.log(returnThis)
-  return { octave, note }
+  return pino
+    .find((p) => p.note == note)
+    ?.pitches.filter((p) => p.octave === octave)
+    ?.map((s) => ({
+      source: s.source,
+      sound: new Howl({ src: [s.source] }),
+    }));
 }

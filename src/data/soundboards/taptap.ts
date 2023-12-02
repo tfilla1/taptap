@@ -18,15 +18,12 @@ const octaves = [0, 1, 2, 3, 4, 5, 6, 7]
 
 
 export const determineScale = (root: string, octave: number): string[] => {
-  // const board = pino('piano')
-  // console.log({ board })
 
   let position = notes.findIndex(note => note === root)
   const newScale: string[] = [notes[position] + '-' + octave]
   major_scale.map(interval => {
     position += interval
 
-    // TODO determine when to go up an octave
     if (position % notes.length === 0) {
       octave++
     }
@@ -34,8 +31,6 @@ export const determineScale = (root: string, octave: number): string[] => {
 
 
     newScale.push(notes[position] + '-' + octave)
-
-    console.log({ interval, position, octave })
 
     return notes[position]
   })

@@ -148,7 +148,6 @@ onKeyDown(keys, (e: KeyboardEvent) => {
       <div class="text-wrap">
         {{ scale }}
       </div>
-      <!-- <pre>{{ scale }}</pre> -->
     </template>
     <div class="d-flex mx-2">
       <div
