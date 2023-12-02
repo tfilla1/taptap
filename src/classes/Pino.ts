@@ -1,9 +1,11 @@
 export class Pitch {
   octave: number;
   source: string;
-  constructor(octave: number, source: string) {
+  sound?: Howl;
+  constructor(octave: number, source: string, sound?: Howl) {
     this.octave = octave;
     this.source = source;
+    this.sound = sound ?? undefined;
   }
 }
 

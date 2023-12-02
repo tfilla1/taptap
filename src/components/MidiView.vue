@@ -2,7 +2,13 @@
 import { computed, onMounted, ref, Ref } from "vue";
 import { useAppStore } from "@/store/app";
 
-import { convertMidiToNote } from "@/utils/convertMidiToNote";
+import anime, { AnimeTimelineInstance } from "animejs";
+import { createAnimation } from "@/utils/createAnimation";
+
+import {
+  convertMidiToPitch,
+  convertMidiToPino,
+} from "@/utils/convertMidiToNote";
 
 const midi: Ref<MIDIAccess> = ref({} as MIDIAccess); // global MIDIAccess object
 const midiInputs = ref([] as any[]);
@@ -62,13 +68,34 @@ const startLoggingMIDIInput = (
 
 const onMIDIMessage = (event: any) => {
   let midiKey = event.data[1];
-  let sounds = convertMidiToNote(midiKey as number);
-
+  let sounds = convertMidiToPitch(midiKey as number);
+  let pino = convertMidiToPino(midiKey as number);
+  if (pino!.enharmonics && typeof pino!.note === "object") {
+    (pino!.note as Array<string>).forEach((item, index) => {
+      console.log(item);
+      console.log(index);
+      anime(
+        createAnimation(
+          item,
+          typeof pino!.color === "object" ? pino!.color[index] : pino!.color,
+          pino!.enharmonics ? "id" : "class",
+        ),
+      );
+    });
+  } else {
+    anime(
+      createAnimation(
+        pino!.note,
+        typeof pino!.color === "object" ? pino!.color[0] : pino!.color,
+        pino!.enharmonics ? "id" : "class",
+      ),
+    );
+  }
   // 144: noteOn
   // 128: noteOff
   const noteOn = event.data[0] === 144;
   if (noteOn) {
-    sounds![0].sound.play();
+    sounds![0].sound?.play();
   }
   return event.data;
 };

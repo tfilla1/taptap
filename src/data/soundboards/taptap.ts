@@ -1,7 +1,8 @@
+
+import { Howl, Howler } from "howler";
 import { Pino, Pitch } from "@/classes/Pino";
 import { the_keys } from "@/utils/keyboard";
 import { getRandomColor } from "@/utils/getRandomColor";
-import { convertMidiToNote } from "@/utils/convertMidiToNote";
 import { pianoData } from '../soundboards/pino'
 
 const getColor = (note: string) => {
@@ -45,9 +46,12 @@ export const pino = (type: 'piano'): Pino[] => {
       note: noteObject?.enharmonics ? note.split('_') : note,
       key: noteObject?.key,
       pitches: Array.from(octaves, (octave) => {
+        const source = `${import.meta.env.VITE_SOUNDS_DIR}/${type}/_ ${octave} ${note} ${octave}.mp3`
+
         return {
           octave,
-          source: `${import.meta.env.VITE_SOUNDS_DIR}/${type}/_ ${octave} ${note} ${octave}.mp3`
+          source,
+          sound: new Howl({ src: [source] })
         } as Pitch
       }),
       color: noteObject?.color,

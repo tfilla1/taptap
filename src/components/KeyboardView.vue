@@ -64,16 +64,11 @@ onKeyDown(keys, (e: KeyboardEvent) => {
   console.log({ pino });
   if (pino) {
     const source = pino?.pitches
-      .filter((s) => s.octave === octave.value)
-      .map((s) => ({ source: s.source, sound: new Howl({ src: [s.source] }) }))
-      .flat(2);
-
-    // find((s) => s.octave === octave.value)?.source;
+      .find((s) => s.octave === octave.value)
+      ?.sound?.play();
 
     if (source) {
-      console.log({ theNotre: pino! });
       if (pino!.enharmonics && typeof pino!.note === "object") {
-        console.log("asdf");
         (pino!.note as Array<string>).forEach((item, index) => {
           console.log(item);
           console.log(index);
@@ -96,8 +91,6 @@ onKeyDown(keys, (e: KeyboardEvent) => {
           ),
         );
       }
-      console.log({ source: source[0] });
-      source[0].sound.play();
     }
   } else {
     if (key === "z" || key === "x") changeOctave(key);
