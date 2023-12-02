@@ -112,7 +112,7 @@ const selectedMidiDevice = ref();
 
 <template>
   <v-card :title="title" :subtitle="selectedMidiDevice" height="500">
-    <v-list v-if="midiInputs">
+    <v-list v-if="midiInputs?.length > 0">
       <v-list-subheader>Inputs</v-list-subheader>
       <v-list-item
         v-for="md in midiInputs"
@@ -124,7 +124,7 @@ const selectedMidiDevice = ref();
       >
       </v-list-item>
     </v-list>
-    <v-list v-if="midiOutputs">
+    <v-list v-if="midiOutputs?.length > 0">
       <v-list-subheader>Outputs</v-list-subheader>
       <v-list-item
         v-for="md in midiOutputs"
