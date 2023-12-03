@@ -1,4 +1,5 @@
 // Composables
+import { useAppStore } from '@/store/app'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
@@ -34,6 +35,16 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
+})
+
+router.beforeEach(() => {
+
+  navigator.requestMIDIAccess().then((midiAccess: MIDIAccess) => {
+
+    useAppStore().loadMidiDevices(midiAccess);
+  }, () => {
+    console.log('errrrorroorrrroror')
+  });
 })
 router.afterEach((to) => {
   console.log(import.meta.env.BASE_URL)

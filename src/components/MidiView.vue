@@ -10,45 +10,29 @@ import {
   convertMidiToPino,
 } from "@/utils/convertMidiToNote";
 
-const midi: Ref<MIDIAccess> = ref({} as MIDIAccess); // global MIDIAccess object
 const midiInputs = ref([] as any[]);
 const midiOutputs = ref([] as any[]);
 const appStore = useAppStore();
 const pinos = computed(() => appStore.getSounds);
 
-const determineMidiInputs = (midiAccess: any) => {
-  const inputs = [];
-  for (const entry of midiAccess.inputs) {
-    console.log({ entry });
-    inputs.push(entry[1]);
-  }
-
-  return inputs;
-};
-const determineMidiOutputs = (midiAccess: any) => {
-  const outputs = [];
-  for (const entry of midiAccess.outputs) {
-    console.log({ entry });
-    outputs.push(entry[1]);
-  }
-  return outputs;
-};
+const midiDevices = computed(() => appStore.getMidiDevices);
+const selectedMidiDevice = computed(() => appStore.getSelectedMidiDevice);
 
 const onMIDISuccess = (midiAccess: MIDIAccess) => {
   console.log("MIDI ready!");
-  console.log({ midiAccess });
 
-  midi.value = midiAccess;
+  appStore.loadMidiDevices(midiAccess);
+  appStore.setSelectedMidiDevice(midiDevices.value[0].id);
 
-  midiInputs.value = determineMidiInputs(midiAccess);
-  midiOutputs.value = determineMidiOutputs(midiAccess);
-  selectedMidiDevice.value = midiInputs.value[0].id;
-  console.log({ midiInputs: midiInputs.value });
-  startLoggingMIDIInput(midiAccess, selectedMidiDevice.value);
+  console.log({ midiInputs: midiDevices.value });
+
+  startLoggingMIDIInput(
+    midiAccess,
+    selectedMidiDevice.value as unknown as MIDIPort,
+  );
 };
 const changeSelectedDevice = (id: string) => {
-  console.log({ id });
-  selectedMidiDevice.value = id;
+  appStore.setSelectedMidiDevice(id);
 };
 const onMIDIFailure = (msg: any) => {
   console.error(`Failed to get MIDI access - ${msg}`);
@@ -103,31 +87,17 @@ const onMIDIMessage = (event: any) => {
 onMounted(() => {
   navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
 });
+
 const title = ref("midi devices");
 const subtitle = ref("");
-// const midiDevices = ref(listInputsAndOutputs(midi.value));
-const midiDevices = ref({});
-const selectedMidiDevice = ref();
 </script>
 
 <template>
   <v-card :title="title" :subtitle="selectedMidiDevice" height="500">
-    <v-list v-if="midiInputs?.length > 0">
-      <v-list-subheader>Inputs</v-list-subheader>
+    <v-list v-if="midiDevices?.length > 0">
+      <v-list-subheader>Devices</v-list-subheader>
       <v-list-item
-        v-for="md in midiInputs"
-        :key="md"
-        :title="md.name"
-        prepend-icon="$piano"
-        :subtitle="md.manufacturer"
-        @click="changeSelectedDevice(md.id)"
-      >
-      </v-list-item>
-    </v-list>
-    <v-list v-if="midiOutputs?.length > 0">
-      <v-list-subheader>Outputs</v-list-subheader>
-      <v-list-item
-        v-for="md in midiOutputs"
+        v-for="md in midiDevices"
         :key="md"
         :title="md.name"
         prepend-icon="$piano"
