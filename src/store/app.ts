@@ -2,7 +2,7 @@
 import { defineStore } from 'pinia'
 // import { pino } from '@/data/soundboards/pino'
 import { taptap, pino } from '@/data/soundboards/taptap'
-import { determineMidiInputs } from '@/utils/determineMidiDevices'
+import { determineMidiInputs, determineMidiOutputs } from '@/utils/determineMidiDevices'
 
 
 import { Pino } from '@/classes/Pino'
@@ -18,8 +18,8 @@ export const useAppStore = defineStore('app', {
   actions: {
     loadMidiDevices(midiAccess: MIDIAccess) {
       this.midiDevices = determineMidiInputs(midiAccess);
+      this.midiOutputs = determineMidiOutputs(midiAccess);
       return this.midiDevices
-      // this.midiOutputs = determineMidiOutputs(midiAccess);
     },
     loadPianoSounds() {
       this.sounds = pino('piano')
@@ -47,6 +47,7 @@ export const useAppStore = defineStore('app', {
   },
   getters: {
     getMidiDevices: (state) => state.midiDevices,
+    getMidiOutputs: (state) => state.midiOutputs,
     getSelectedMidiDevice: (state) => state.selectedMidiDevice,
     getSounds: (state) => state.sounds,
     getSoundboards: (state) => state.soundboards,
