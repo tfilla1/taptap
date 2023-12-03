@@ -2,16 +2,25 @@
 import { defineStore } from 'pinia'
 // import { pino } from '@/data/soundboards/pino'
 import { taptap, pino } from '@/data/soundboards/taptap'
+import { determineMidiInputs } from '@/utils/determineMidiDevices'
 
 
 import { Pino } from '@/classes/Pino'
 export const useAppStore = defineStore('app', {
   state: () => ({
+    midiDevices: [] as any[],
+    midiOutputs: [] as any[],
+    selectedMidiDevice: '',
     sounds: [] as Pino[],
     soundboards: [{ key: 'piano', icon: '$piano' }, { key: 'taptap', icon: '$drumpad' }],
     selectedSoundboard: { key: 'piano', icon: '$piano' }
   }),
   actions: {
+    loadMidiDevices(midiAccess: MIDIAccess) {
+      this.midiDevices = determineMidiInputs(midiAccess);
+      return this.midiDevices
+      // this.midiOutputs = determineMidiOutputs(midiAccess);
+    },
     loadPianoSounds() {
       this.sounds = pino('piano')
       console.log(this.sounds)
@@ -25,6 +34,11 @@ export const useAppStore = defineStore('app', {
     loadSounds() {
       return this.selectedSoundboard.key === 'piano' ? this.loadPianoSounds() : this.loadTapTapSounds()
     },
+    setSelectedMidiDevice(id: string) {
+      console.log({ id });
+      this.selectedMidiDevice = id;
+      return this.selectedMidiDevice;
+    },
     setSelectedSoundboard() {
       this.selectedSoundboard = this.selectedSoundboard.key === 'piano' ? this.soundboards.find(sb => sb.key === 'taptap')! : this.soundboards.find(sb => sb.key === 'piano')!
       this.loadSounds()
@@ -32,6 +46,8 @@ export const useAppStore = defineStore('app', {
     }
   },
   getters: {
+    getMidiDevices: (state) => state.midiDevices,
+    getSelectedMidiDevice: (state) => state.selectedMidiDevice,
     getSounds: (state) => state.sounds,
     getSoundboards: (state) => state.soundboards,
     getSelectedSoundboard: (state) => state.selectedSoundboard
