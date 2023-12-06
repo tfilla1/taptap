@@ -40,12 +40,14 @@ const changeOctave = (key: string) => {
 
   if (octave.value > maxOctave) octave.value = 1;
 
-  scale.value = determineScale(notes[scaleIndex.value], octave.value);
+  appStore.setOctave(octave.value);
+  appStore.loadScale();
+  appStore.loadSounds();
 };
 
 const scaleIndex = ref(0);
-const scale = ref(determineScale("C", octave.value));
-const scaleDisplay = computed(() => notes[scaleIndex.value]);
+const scale = computed(() => appStore.getScale);
+const scaleRoot = computed(() => notes[scaleIndex.value]);
 const showScale: Ref<boolean> = ref(true);
 const changeScale = (key: string) => {
   if (key === "v") scaleIndex.value++;
@@ -55,7 +57,9 @@ const changeScale = (key: string) => {
 
   if (scaleIndex.value >= notes.length) scaleIndex.value = 0;
 
-  scale.value = determineScale(notes[scaleIndex.value], octave.value);
+  appStore.setRoot(notes[scaleIndex.value]);
+  appStore.loadScale();
+  appStore.loadSounds();
 };
 onKeyDown(keys, (e: KeyboardEvent) => {
   const key = e.key;
@@ -127,7 +131,7 @@ onKeyDown(keys, (e: KeyboardEvent) => {
               variant="flat"
               @click="changeScale('c')"
             ></v-btn>
-            {{ scaleDisplay }}
+            {{ scaleRoot }}
             <v-btn
               icon="$plus"
               variant="flat"
@@ -154,13 +158,16 @@ onKeyDown(keys, (e: KeyboardEvent) => {
           <div
             v-for="(color, index) in p.color"
             :key="index"
-            class="item px-2"
+            class="item enharmonic px-2"
             height="50"
             :id="`${p.note[index]}`"
             :style="{
               backgroundColor: color,
+              height: '75px',
             }"
-          ></div>
+          >
+            {{ p.note[index] }}
+          </div>
         </div>
         <div
           v-else
@@ -168,7 +175,7 @@ onKeyDown(keys, (e: KeyboardEvent) => {
           :class="p.note"
           height="50"
           :style="{
-            backgroundColor: p.color.toString(),
+            backgroundColor: p.color?.toString(),
           }"
         >
           {{ p.note }}
@@ -180,8 +187,8 @@ onKeyDown(keys, (e: KeyboardEvent) => {
 
 <style>
 .enharmonic {
-  /* height: 25px; */
-  width: 35px;
+  height: 25px;
+  /* width: 35px; */
   border: 1px solid black;
 }
 .non-enharmonic {
@@ -210,7 +217,7 @@ onKeyDown(keys, (e: KeyboardEvent) => {
 }
 .item {
   /* background-color: #ff00aa; */
-  width: 50px;
-  height: 50px;
+  /* width: 50px; */
+  height: 150px;
 }
 </style>

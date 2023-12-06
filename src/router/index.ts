@@ -38,10 +38,13 @@ const router = createRouter({
 })
 
 router.beforeEach(() => {
+  const appStore = useAppStore()
+
+  appStore.loadScale()
 
   navigator.requestMIDIAccess().then((midiAccess: MIDIAccess) => {
 
-    useAppStore().loadMidiDevices(midiAccess);
+    appStore.loadMidiDevices(midiAccess);
   }, () => {
     console.log('errrrorroorrrroror')
   });
