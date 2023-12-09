@@ -8,6 +8,7 @@ import { Degree } from '@/data/soundboards/taptap'
 import { Pino } from '@/classes/Pino'
 export const useAppStore = defineStore('app', {
   state: () => ({
+    debug: false,
     midiDevices: [] as any[],
     midiOutputs: [] as any[],
     selectedMidiDevice: '',
@@ -57,9 +58,13 @@ export const useAppStore = defineStore('app', {
       this.selectedSoundboard = this.selectedSoundboard.key === 'piano' ? this.soundboards.find(sb => sb.key === 'taptap')! : this.soundboards.find(sb => sb.key === 'piano')!
       this.loadSounds()
       return this.selectedSoundboard
+    },
+    toggleDebug() {
+      this.debug = !this.debug
     }
   },
   getters: {
+    getDebug: (state) => state.debug,
     getMidiDevices: (state) => state.midiDevices,
     getSelectedMidiDevice: (state) => state.selectedMidiDevice,
     getScale: (state) => state.scale,

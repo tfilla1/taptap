@@ -11,7 +11,7 @@ import 'vuetify/styles'
 // Composables
 import { createVuetify } from 'vuetify'
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
-import { mdiMinus, mdiPiano, mdiPlus, mdiVectorPolygon, mdiWeatherNight, mdiWeatherSunny } from '@mdi/js'
+import { mdiAbacus, mdiAirplane, mdiMinus, mdiPiano, mdiPlus, mdiVectorPolygon, mdiWeatherNight, mdiWeatherSunny } from '@mdi/js'
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
   icons: {
@@ -24,6 +24,8 @@ export default createVuetify({
       drumpad: mdiVectorPolygon,
       minus: mdiMinus,
       plus: mdiPlus,
+      testing: mdiAirplane,
+      lame: mdiAbacus
     },
     defaultSet: 'mdi',
     sets: {
@@ -34,7 +36,7 @@ export default createVuetify({
     themes: {
       light: {
         colors: {
-          primary: '#EFFB8D',
+          primary: '#7CE7F8',
           secondary: '#F87CE7',
         },
       },

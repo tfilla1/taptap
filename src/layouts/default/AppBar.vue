@@ -21,6 +21,10 @@ const toggleTheme = () =>
     ? "light"
     : "dark");
 const isDark = computed(() => theme.global.current.value.dark);
+const debug = computed(() => appStore.getDebug);
+const toggleDebug = () => {
+  appStore.toggleDebug();
+};
 </script>
 
 <template>
@@ -34,6 +38,11 @@ const isDark = computed(() => theme.global.current.value.dark);
       >
     </v-app-bar-title>
     <template #append>
+      <v-btn
+        :icon="debug ? '$testing' : '$lame'"
+        :color="debug ? 'secondary' : 'primary'"
+        @click="toggleDebug"
+      ></v-btn>
       <v-btn
         :icon="isDark ? '$dark' : '$light'"
         color="secondary"

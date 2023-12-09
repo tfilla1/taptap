@@ -6,10 +6,44 @@ import { getRandomColor } from "@/utils/getRandomColor";
 import { pianoData } from '../soundboards/pino'
 
 const getColor = (degree: number, accidental: boolean) => {
-  return accidental ? [degrees[degree], degrees[degree - 1]] : degrees[degree]
+  return accidental ? [degrees[degree], degrees[degree - 1]] : [degrees[degree]]
 }
 
 // key to number % 60 finds the letter to search for
+const c_scale = {
+  scale: 'C',
+  degrees: [
+    {
+      degree: 0,
+      note: 'C',
+      color: '#EB3F33'
+    },
+    {
+      degree: undefined,
+      note: 'CS_DB',
+      color: ['#EB3F33', '#F28500'],
+      accidental: true
+    },
+    {
+      degree: 1,
+      note: 'D',
+      color: '#F28500'
+    }
+  ]
+}
+
+const d_scale = {
+  scale: 'D',
+  degrees: [
+    { "note": "D", "octave": 2, "color": ["#EB3F33"] },
+    { "note": "E", "octave": 2, "color": ["#F28500"] },
+    { "note": "FS_GB", "octave": 2, "color": ["#FFEE00"] },
+    { "note": "G", "octave": 2, "color": ["#16A22D"] },
+    { "note": "A", "octave": 2, "color": ["#0000E0"] },
+    { "note": "B", "octave": 2, "color": ["#7C43B1"] },
+    { "note": "CS_DB", "octave": 2, "color": ["#F976A6"] },
+    { "note": "D", "octave": 3, "color": [null] }]
+}
 export const notes = ['C', 'CS_DB', 'D', 'DS_EB', 'E', 'F', 'FS_GB', 'G', 'GS_AB', 'A', 'AS_BB', 'B']
 export const degrees = ['#EB3F33', '#F28500', '#FFEE00', '#16A22D', '#0000E0', '#7C43B1', '#F976A6']
 const major_scale = [2, 2, 1, 2, 2, 2, 1]
@@ -20,9 +54,9 @@ const octaves = [0, 1, 2, 3, 4, 5, 6, 7]
 export class Degree {
   note: string
   octave: number
-  color: string | string[]
+  color: string[]
 
-  constructor(note: string, octave: number, color: string) {
+  constructor(note: string, octave: number, color: string[]) {
     this.note = note;
     this.octave = octave;
     this.color = color;
@@ -33,6 +67,7 @@ export const determineScale = (root: string, octave: number): Degree[] => {
   // return [ {note: 'C', color: '#EB3F33'}]
   let position = notes.findIndex(note => note === root)
   const newScale: Degree[] = [{ note: notes[position], octave, color: getColor(0, false) }]
+
   major_scale.map((interval, index) => {
     position += interval
 
@@ -56,10 +91,24 @@ export const determineScale = (root: string, octave: number): Degree[] => {
 export const pino = (root: string, octave: number): Pino[] => {
   const type = 'piano'
   const scale = determineScale(root, octave)
-  // const something = scale.map(sc => {
+  // return scale.map(sc => {
+  //   console.log({ sc })
   //   return {
+  //     note: sc.note,
+  //     color: sc.color,
+  //     enharmonics: sc.note.split('_').length > 1,
+  //     octave: sc.octave,
+  //     key: pianoData.find(p => p.note === sc.note)?.key,
+  //     pitches: Array.from(octaves, (octave) => {
+  //       const source = `${import.meta.env.VITE_SOUNDS_DIR}/${type}/_ ${sc.octave} ${sc.note} ${sc.octave}.mp3`
 
-  //   }
+  //       return {
+  //         octave,
+  //         source,
+  //         sound: new Howl({ src: [source] })
+  //       } as Pitch
+  //     }),
+  //   } as Pino
   // })
   // console.log({ something })
   return notes.map((note, index) => {
