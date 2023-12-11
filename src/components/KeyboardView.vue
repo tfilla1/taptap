@@ -23,7 +23,6 @@ const timeline = ref(
 );
 
 const restart = () => {
-  console.log("restart");
   timeline.value.restart();
 };
 
@@ -63,18 +62,15 @@ onKeyDown(keys, (e: KeyboardEvent) => {
   const key = e.key;
 
   const pino = pinos.value.find((p) => p.key?.includes(key));
-  console.log({ pino });
+
   if (pino) {
     const source = pino?.pitches
       .find((s) => s.octave === octave.value)
       ?.sound?.play();
 
-    console.log({ source });
     if (source) {
       if (pino!.enharmonics && typeof pino!.note === "object") {
         (pino!.note as Array<string>).forEach((item, index) => {
-          console.log(item);
-          console.log(index);
           anime(
             createAnimation(
               item,
