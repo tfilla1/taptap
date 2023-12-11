@@ -30,17 +30,19 @@ const restart = () => {
 const minOctave = 0;
 const maxOctave = 7;
 
-const octave: Ref<number> = ref(2);
+const octave: Ref<number> = computed(() => appStore.getOctave);
 const showOctave: Ref<boolean> = ref(true);
 const changeOctave = (key: string) => {
-  if (key === "z") octave.value--;
-  else if (key === "x") octave.value++;
+  let innerOctave = octave.value;
+  if (key === "z") innerOctave--;
+  else if (key === "x") innerOctave++;
 
-  if (octave.value < minOctave) octave.value = 7;
+  if (octave.value < minOctave) innerOctave = 7;
 
-  if (octave.value > maxOctave) octave.value = 1;
+  if (octave.value > maxOctave) innerOctave = 1;
 
-  scale.value = determineScale(notes[scaleIndex.value], octave.value);
+  appStore.setOctave(innerOctave);
+  scale.value = determineScale(notes[scaleIndex.value], innerOctave);
 };
 
 const scaleIndex = ref(0);
@@ -67,6 +69,7 @@ onKeyDown(keys, (e: KeyboardEvent) => {
       .find((s) => s.octave === octave.value)
       ?.sound?.play();
 
+    console.log({ source });
     if (source) {
       if (pino!.enharmonics && typeof pino!.note === "object") {
         (pino!.note as Array<string>).forEach((item, index) => {

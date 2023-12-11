@@ -10,6 +10,7 @@ export const useAppStore = defineStore('app', {
   state: () => ({
     midiDevices: [] as any[],
     midiOutputs: [] as any[],
+    octave: 2,
     selectedMidiDevice: '',
     sounds: [] as Pino[],
     soundboards: [{ key: 'piano', icon: '$piano' }, { key: 'taptap', icon: '$drumpad' }],
@@ -27,12 +28,16 @@ export const useAppStore = defineStore('app', {
       return this.sounds
     },
     loadTapTapSounds() {
-      this.sounds = taptap
-      console.log({ taptap })
+      this.sounds = taptap()
+      this.setOctave(1)
+      console.log({ taptap: this.sounds })
       return this.sounds
     },
     loadSounds() {
       return this.selectedSoundboard.key === 'piano' ? this.loadPianoSounds() : this.loadTapTapSounds()
+    },
+    setOctave(value: number) {
+      this.octave = value
     },
     setSelectedMidiDevice(id: string) {
       console.log({ id });
@@ -48,6 +53,7 @@ export const useAppStore = defineStore('app', {
   getters: {
     getMidiDevices: (state) => state.midiDevices,
     getMidiOutputs: (state) => state.midiOutputs,
+    getOctave: (state) => state.octave,
     getSelectedMidiDevice: (state) => state.selectedMidiDevice,
     getSounds: (state) => state.sounds,
     getSoundboards: (state) => state.soundboards,
