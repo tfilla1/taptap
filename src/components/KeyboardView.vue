@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Howl, Howler } from "howler";
-import { onKeyStroke } from "@vueuse/core";
+import { onKeyDown, onKeyUp, onKeyStroke } from "@vueuse/core";
 import { computed } from "vue";
 import { onMounted, Ref, ref } from "vue";
 import { useAppStore } from "@/store/app";
@@ -59,6 +59,12 @@ const changeScale = (key: string) => {
   scale.value = determineScale(notes[scaleIndex.value], octave.value);
 };
 
+const currentlyPlaying = ref({} as Howl);
+
+onKeyUp(keys, (e: KeyboardEvent) => {
+  console.log({ e });
+  currentlyPlaying.value.stop();
+});
 onKeyStroke(
   keys,
   (e: KeyboardEvent) => {
@@ -67,9 +73,10 @@ onKeyStroke(
     const pino = pinos.value.find((p) => p.key?.includes(key));
 
     if (pino) {
-      const source = pino?.pitches
-        .find((s) => s.octave === octave.value)
-        ?.sound?.play();
+      currentlyPlaying.value = pino?.pitches.find(
+        (s) => s.octave === octave.value,
+      )?.sound!;
+      const source = currentlyPlaying.value.play();
 
       if (source) {
         if (pino!.enharmonics && typeof pino!.note === "object") {
