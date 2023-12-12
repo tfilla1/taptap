@@ -59,8 +59,6 @@ const changeScale = (key: string) => {
   scale.value = determineScale(notes[scaleIndex.value], octave.value);
 };
 
-const currentlyPlaying = ref({} as Howl);
-
 onKeyStroke(
   keys,
   (e: KeyboardEvent) => {
@@ -69,10 +67,9 @@ onKeyStroke(
     const pino = pinos.value.find((p) => p.key?.includes(key));
 
     if (pino) {
-      currentlyPlaying.value = pino?.pitches.find(
-        (s) => s.octave === octave.value,
-      )?.sound!;
-      const source = currentlyPlaying.value.play();
+      const source = pino?.pitches
+        .find((s) => s.octave === octave.value)
+        ?.sound?.play();
 
       if (source) {
         if (pino!.enharmonics && typeof pino!.note === "object") {
