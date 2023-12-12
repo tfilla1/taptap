@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Howl, Howler } from "howler";
-import { onKeyDown, onKeyUp, onKeyStroke } from "@vueuse/core";
+import { onKeyStroke } from "@vueuse/core";
 import { computed } from "vue";
 import { onMounted, Ref, ref } from "vue";
 import { useAppStore } from "@/store/app";
