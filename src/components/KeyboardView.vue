@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Howl, Howler } from "howler";
-import { onKeyDown } from "@vueuse/core";
+import { onKeyDown, onKeyUp, onKeyStroke } from "@vueuse/core";
 import { computed } from "vue";
 import { onMounted, Ref, ref } from "vue";
 import { useAppStore } from "@/store/app";
@@ -58,44 +58,52 @@ const changeScale = (key: string) => {
 
   scale.value = determineScale(notes[scaleIndex.value], octave.value);
 };
-onKeyDown(keys, (e: KeyboardEvent) => {
-  const key = e.key;
 
-  const pino = pinos.value.find((p) => p.key?.includes(key));
+const currentlyPlaying = ref({} as Howl);
 
-  if (pino) {
-    const source = pino?.pitches
-      .find((s) => s.octave === octave.value)
-      ?.sound?.play();
+onKeyStroke(
+  keys,
+  (e: KeyboardEvent) => {
+    const key = e.key;
 
-    if (source) {
-      if (pino!.enharmonics && typeof pino!.note === "object") {
-        (pino!.note as Array<string>).forEach((item, index) => {
+    const pino = pinos.value.find((p) => p.key?.includes(key));
+
+    if (pino) {
+      currentlyPlaying.value = pino?.pitches.find(
+        (s) => s.octave === octave.value,
+      )?.sound!;
+      const source = currentlyPlaying.value.play();
+
+      if (source) {
+        if (pino!.enharmonics && typeof pino!.note === "object") {
+          (pino!.note as Array<string>).forEach((item, index) => {
+            anime(
+              createAnimation(
+                item,
+                typeof pino!.color === "object"
+                  ? pino!.color[index]
+                  : pino!.color,
+                pino!.enharmonics ? "id" : "class",
+              ),
+            );
+          });
+        } else {
           anime(
             createAnimation(
-              item,
-              typeof pino!.color === "object"
-                ? pino!.color[index]
-                : pino!.color,
+              pino!.note,
+              typeof pino!.color === "object" ? pino!.color[0] : pino!.color,
               pino!.enharmonics ? "id" : "class",
             ),
           );
-        });
-      } else {
-        anime(
-          createAnimation(
-            pino!.note,
-            typeof pino!.color === "object" ? pino!.color[0] : pino!.color,
-            pino!.enharmonics ? "id" : "class",
-          ),
-        );
+        }
       }
+    } else {
+      if (key === "z" || key === "x") changeOctave(key);
+      if (key === "c" || key === "v") changeScale(key);
     }
-  } else {
-    if (key === "z" || key === "x") changeOctave(key);
-    if (key === "c" || key === "v") changeScale(key);
-  }
-});
+  },
+  { dedupe: true },
+);
 </script>
 
 <template>
