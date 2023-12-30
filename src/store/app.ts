@@ -2,7 +2,7 @@
 import { defineStore } from 'pinia'
 // import { pino } from '@/data/soundboards/pino'
 import { taptap, pino, determineScale } from '@/data/soundboards/taptap'
-import { determineMidiInputs } from '@/utils/determineMidiDevices'
+import { determineMidiInputs, determineMidiOutputs } from '@/utils/determineMidiDevices'
 import { Degree } from '@/data/soundboards/taptap'
 
 import { Pino } from '@/classes/Pino'
@@ -18,7 +18,6 @@ export const useAppStore = defineStore('app', {
     selectedSoundboard: { key: 'piano', icon: '$piano' },
     scale: {} as Degree[],
     root: 'C',
-    octave: 2
   }),
   actions: {
     loadMidiDevices(midiAccess: MIDIAccess) {
