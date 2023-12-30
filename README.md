@@ -28,39 +28,39 @@ git push origin {user}/{feature}
 
 then submit a pull request, through github
 
-install bun, this will be the package manager and server we'll use.
+install node, vite and pnpm, these will be helpful in local development.
 
-```{shell}
-curl -fsSL https://bun.sh/install | bash
-```
+[node](https://nodejs.org/)
+[vite](https://vitejs.org/)
+[pnpm](https://pnpm.io/)
 
 install dependencies
 
 ``` {shell}
-# bun 
-bun install
-```
+# pnpm
+pnpm install
+
 
 ### Compiles and hot-reloads for development
 
 ``` {shell}
 
-# bun 
-bun run dev
+# pnpm 
+pnpm run dev
 ```
 
 ### Compiles and minifies for production
 
 ```{shell}
-# bun 
-bun run build
+# pnpm 
+pnpm run build
 ```
 
 ### Lints and fixes files
 
 ```{shell}
-# bun 
-bun run lint
+# pnpm 
+pnpm run lint
 ```
 
 The app will start running on [https://localhost:3420/]

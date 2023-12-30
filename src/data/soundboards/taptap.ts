@@ -145,19 +145,24 @@ const urls = ['bubbles.mp3', 'clay.mp3',
 ];
 
 
-export const taptap = Array.from(the_keys, (key) => {
-  const hasBeenTaken = [] as number[]
-  return {
-    key: [key.letter],
-    color: getRandomColor(),
-    note: key.letter,
-    enharmonics: key.enharmonics,
-    pitches: [{
-      source: fillPino(hasBeenTaken),
-      octave: 1
-    } as Pitch] as Pitch[]
-  } as Pino
-})
+export const taptap = () => {
+  return Array.from(the_keys, (key) => {
+    const hasBeenTaken = [] as number[]
+    const source = fillPino(hasBeenTaken)
+
+    return {
+      key: [key.letter],
+      color: getRandomColor(),
+      note: key.letter,
+      enharmonics: key.enharmonics,
+      pitches: [{
+        source,
+        sound: new Howl({ src: [source] }),
+        octave: 1
+      } as Pitch] as Pitch[]
+    } as Pino
+  })
+}
 
 function fillPino(hasBeenTaken: number[]) {
   const randomItem = Math.floor(Math.random() * 26);

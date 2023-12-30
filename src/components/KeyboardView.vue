@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Howl, Howler } from "howler";
-import { onKeyDown } from "@vueuse/core";
+import { onKeyDown, onKeyUp, onKeyStroke } from "@vueuse/core";
 import { computed } from "vue";
 import { onMounted, Ref, ref } from "vue";
 import { useAppStore } from "@/store/app";
@@ -23,24 +23,24 @@ const timeline = ref(
 );
 
 const restart = () => {
-  console.log("restart");
   timeline.value.restart();
 };
 
 const minOctave = 0;
 const maxOctave = 7;
 
-const octave: Ref<number> = ref(2);
+const octave: Ref<number> = computed(() => appStore.getOctave);
 const showOctave: Ref<boolean> = ref(true);
 const changeOctave = (key: string) => {
-  if (key === "z") octave.value--;
-  else if (key === "x") octave.value++;
+  let innerOctave = octave.value;
+  if (key === "z") innerOctave--;
+  else if (key === "x") innerOctave++;
 
-  if (octave.value < minOctave) octave.value = 7;
+  if (octave.value < minOctave) innerOctave = 7;
 
-  if (octave.value > maxOctave) octave.value = 1;
+  if (octave.value > maxOctave) innerOctave = 1;
 
-  appStore.setOctave(octave.value);
+  appStore.setOctave(innerOctave);
   appStore.loadScale();
   appStore.loadSounds();
 };
@@ -61,46 +61,56 @@ const changeScale = (key: string) => {
   appStore.loadScale();
   appStore.loadSounds();
 };
-onKeyDown(keys, (e: KeyboardEvent) => {
-  const key = e.key;
 
-  const pino = pinos.value.find((p) => p.key?.includes(key));
-  console.log({ pino });
-  if (pino) {
-    const source = pino?.pitches
-      .find((s) => s.octave === octave.value)
-      ?.sound?.play();
+const currentlyPlaying = ref({} as Howl);
 
-    if (source) {
-      if (pino!.enharmonics && typeof pino!.note === "object") {
-        (pino!.note as Array<string>).forEach((item, index) => {
-          console.log(item);
-          console.log(index);
+onKeyUp(keys, (e: KeyboardEvent) => {
+  console.log({ e });
+  currentlyPlaying.value.stop();
+});
+onKeyStroke(
+  keys,
+  (e: KeyboardEvent) => {
+    const key = e.key;
+
+    const pino = pinos.value.find((p) => p.key?.includes(key));
+
+    if (pino) {
+      currentlyPlaying.value = pino?.pitches.find(
+        (s) => s.octave === octave.value,
+      )?.sound!;
+      const source = currentlyPlaying.value.play();
+
+      if (source) {
+        if (pino!.enharmonics && typeof pino!.note === "object") {
+          (pino!.note as Array<string>).forEach((item, index) => {
+            anime(
+              createAnimation(
+                item,
+                typeof pino!.color === "object"
+                  ? pino!.color[index]
+                  : pino!.color,
+                pino!.enharmonics ? "id" : "class",
+              ),
+            );
+          });
+        } else {
           anime(
             createAnimation(
-              item,
-              typeof pino!.color === "object"
-                ? pino!.color[index]
-                : pino!.color,
+              pino!.note,
+              typeof pino!.color === "object" ? pino!.color[0] : pino!.color,
               pino!.enharmonics ? "id" : "class",
             ),
           );
-        });
-      } else {
-        anime(
-          createAnimation(
-            pino!.note,
-            typeof pino!.color === "object" ? pino!.color[0] : pino!.color,
-            pino!.enharmonics ? "id" : "class",
-          ),
-        );
+        }
       }
+    } else {
+      if (key === "z" || key === "x") changeOctave(key);
+      if (key === "c" || key === "v") changeScale(key);
     }
-  } else {
-    if (key === "z" || key === "x") changeOctave(key);
-    if (key === "c" || key === "v") changeScale(key);
-  }
-});
+  },
+  { dedupe: true },
+);
 </script>
 
 <template>

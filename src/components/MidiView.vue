@@ -11,11 +11,11 @@ import {
 } from "@/utils/convertMidiToNote";
 
 const midiInputs = ref([] as any[]);
-const midiOutputs = ref([] as any[]);
 const appStore = useAppStore();
 const pinos = computed(() => appStore.getSounds);
 
 const midiDevices = computed(() => appStore.getMidiDevices);
+const midiOutputs = computed(() => appStore.getMidiOutputs);
 const selectedMidiDevice = computed(() => appStore.getSelectedMidiDevice);
 
 const onMIDISuccess = (midiAccess: MIDIAccess) => {
@@ -95,9 +95,21 @@ const subtitle = ref("");
 <template>
   <v-card :title="title" :subtitle="selectedMidiDevice" height="500">
     <v-list v-if="midiDevices?.length > 0">
-      <v-list-subheader>Devices</v-list-subheader>
+      <v-list-subheader>Inputs</v-list-subheader>
       <v-list-item
         v-for="md in midiDevices"
+        :key="md"
+        :title="md.name"
+        prepend-icon="$piano"
+        :subtitle="md.manufacturer"
+        @click="changeSelectedDevice(md.id)"
+      >
+      </v-list-item>
+    </v-list>
+    <v-list v-if="midiOutputs?.length > 0">
+      <v-list-subheader>Outputs</v-list-subheader>
+      <v-list-item
+        v-for="md in midiOutputs"
         :key="md"
         :title="md.name"
         prepend-icon="$piano"
