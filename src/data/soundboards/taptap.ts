@@ -1,7 +1,7 @@
 
 import { Howl, Howler } from "howler";
 import { Pino, Pitch } from "@/classes/Pino";
-import { the_keys } from "@/utils/keyboard";
+import { the_keys, tap_tap_keys_modified } from "@/utils/keyboard";
 import { getRandomColor } from "@/utils/getRandomColor";
 import { pianoData } from '../soundboards/pino'
 
@@ -75,7 +75,7 @@ const urls = ['bubbles.mp3', 'clay.mp3',
 
 
 export const taptap = () => {
-  return Array.from(the_keys, (key) => {
+  return Array.from(tap_tap_keys_modified, (key) => {
     const hasBeenTaken = [] as number[]
     const source = fillPino(hasBeenTaken)
 
