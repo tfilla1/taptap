@@ -4,15 +4,29 @@ import { onKeyDown, onKeyUp, onKeyStroke } from "@vueuse/core";
 import { computed } from "vue";
 import { onMounted, Ref, ref } from "vue";
 import { useAppStore } from "@/store/app";
-import { white_keys, black_keys, mod_keys } from "@/utils/keyboard";
+import {
+  white_keys,
+  black_keys,
+  mod_keys,
+  tap_tap_keys_modified,
+  tap_tap_keys,
+} from "@/utils/keyboard";
 import { determineScale, notes } from "@/data/soundboards/taptap";
 import anime, { AnimeTimelineInstance } from "animejs";
-import { createAnimation } from "@/utils/createAnimation";
+import {
+  createAnimation,
+  createTapTapAnimation,
+} from "@/utils/createAnimation";
 
 const appStore = useAppStore();
 
-const keys = [white_keys, black_keys, mod_keys].flat();
+const keys = tap_tap_keys;
+// const keys = [white_keys, black_keys, mod_keys].flat();
 const pinos = computed(() => appStore.getSounds);
+const selectedSoundboard = computed(() => appStore.getSelectedSoundboard);
+const toggleSoundboard = () => {
+  appStore.setSelectedSoundboard();
+};
 
 const timeline = ref(
   anime.timeline({
@@ -79,24 +93,33 @@ onKeyStroke(
       const source = currentlyPlaying.value.play();
 
       if (source) {
-        if (pino!.enharmonics && typeof pino!.note === "object") {
-          (pino!.note as Array<string>).forEach((item, index) => {
+        if (selectedSoundboard.value.key === "piano") {
+          if (pino!.enharmonics && typeof pino!.note === "object") {
+            (pino!.note as Array<string>).forEach((item, index) => {
+              anime(
+                createAnimation(
+                  item,
+                  typeof pino!.color === "object"
+                    ? pino!.color[index]
+                    : pino!.color,
+                  pino!.enharmonics ? "id" : "class",
+                ),
+              );
+            });
+          } else {
             anime(
               createAnimation(
-                item,
-                typeof pino!.color === "object"
-                  ? pino!.color[index]
-                  : pino!.color,
+                pino!.note,
+                typeof pino!.color === "object" ? pino!.color[0] : pino!.color,
                 pino!.enharmonics ? "id" : "class",
               ),
             );
-          });
+          }
         } else {
           anime(
-            createAnimation(
+            createTapTapAnimation(
               pino!.note,
               typeof pino!.color === "object" ? pino!.color[0] : pino!.color,
-              pino!.enharmonics ? "id" : "class",
             ),
           );
         }
@@ -111,9 +134,20 @@ onKeyStroke(
 </script>
 
 <template>
-  <v-card height="500">
+  <v-card height="500" class="mx-4">
+    <template #prepend>
+      <v-btn
+        :icon="selectedSoundboard.icon"
+        variant="elevated"
+        class="bg-primary"
+        @click="toggleSoundboard"
+      ></v-btn>
+    </template>
     <template #title>
-      <div class="d-flex flex-grow-1">
+      {{ selectedSoundboard.key }}
+    </template>
+    <template #append>
+      <div v-if="selectedSoundboard.key === 'piano'" class="d-flex">
         <div v-if="showOctave" class="d-flex flex-column flex-grow-1">
           <h3>octave</h3>
           <div>
@@ -148,34 +182,55 @@ onKeyStroke(
         </div>
       </div>
     </template>
-    <template #subtitle>
+
+    <div v-if="selectedSoundboard.key === 'piano'">
       <div class="text-wrap">
         {{ scale }}
       </div>
-    </template>
-    <div class="d-flex mx-2">
+      <div class="d-flex mx-2">
+        <div
+          v-for="(p, index) in pinos"
+          class="d-flex flex-column"
+          :class="p.enharmonics ? 'enharmonic' : 'non-enharmonic'"
+          :key="index"
+          height="700"
+        >
+          <div v-if="p.enharmonics" class="d-flex flex-row">
+            <div
+              v-for="(color, index) in p.color"
+              :key="index"
+              class="item px-2"
+              height="50"
+              :id="`${p.note[index]}`"
+              :style="{
+                backgroundColor: color,
+              }"
+            ></div>
+          </div>
+          <div
+            v-else
+            class="item"
+            :class="p.note"
+            height="50"
+            :style="{
+              backgroundColor: p.color.toString(),
+            }"
+          >
+            {{ p.note }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-else class="d-flex flex-wrap mx-2">
       <div
         v-for="(p, index) in pinos"
-        class="d-flex flex-column"
-        :class="p.enharmonics ? 'enharmonic' : 'non-enharmonic'"
+        class="d-flex flex-wrap pa-1"
         :key="index"
         height="700"
       >
-        <div v-if="p.enharmonics" class="d-flex flex-row">
-          <div
-            v-for="(color, index) in p.color"
-            :key="index"
-            class="item px-2"
-            height="50"
-            :id="`${p.note[index]}`"
-            :style="{
-              backgroundColor: color,
-            }"
-          ></div>
-        </div>
         <div
-          v-else
-          class="item"
+          :id="p.note"
+          class="tap-tap-item"
           :class="p.note"
           height="50"
           :style="{
@@ -222,6 +277,12 @@ onKeyStroke(
 .item {
   /* background-color: #ff00aa; */
   width: 50px;
+  height: 50px;
+}
+
+.tap-tap-item {
+  /* background-color: #ff00aa; */
+  width: 85px;
   height: 50px;
 }
 </style>

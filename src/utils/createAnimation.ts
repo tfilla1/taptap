@@ -14,6 +14,18 @@ export const createAnimation = (target: string, color: string, type: "class" | "
   }
 };
 
+export const createTapTapAnimation = (target: string, color: string) =>
+({
+  targets: '#' + target,
+  height: ["0px", "20px", "40px"],
+  width: ['15px', '30px', '50px', '85px'],
+  backgroundColor: [color, '#f0a', '#0af', color],
+  easing: "easeInOutSine",
+  direction: "alternate",
+  duration: 1500,
+  loop: false,
+})
+
 // export const createAnimation = (target: string, color: string) => ({
 //   targets: "." + target,
 //   height: ["20%", "100%", "50%"],

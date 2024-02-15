@@ -2,10 +2,12 @@ export class Pitch {
   octave: number;
   source: string;
   sound?: Howl;
-  constructor(octave: number, source: string, sound?: Howl) {
+  accidental?: boolean;
+  constructor(octave: number, source: string, sound?: Howl, accidental?: boolean) {
     this.octave = octave;
     this.source = source;
     this.sound = sound ?? undefined;
+    this.accidental = accidental ?? false;
   }
 }
 
@@ -57,4 +59,15 @@ export class Pino {
     this.border = border ?? '';
     this.enharmonics = enharmonics ?? false;
   }
+}
+
+export class Soundboard {
+  type: 'piano' | 'taptap' | 'other'
+  pinos: Pino[]
+
+  constructor(type: 'piano' | 'taptap' | 'other', pinos: Pino[]) {
+    this.type = type
+    this.pinos = pinos
+  }
+
 }
