@@ -1,30 +1,69 @@
-// Utilities
-import { defineStore } from 'pinia'
-// import { pino } from '@/data/soundboards/pino'
-import { taptap, pino } from '@/data/soundboards/taptap'
+import { piano, taptap } from '@/data/soundboards/taptap'
 import { determineMidiInputs, determineMidiOutputs } from '@/utils/determineMidiDevices'
+import { defineStore } from 'pinia'
+
+import { Pino, Soundboard, SoundboardType } from '@/classes/Pino'
+const soundboards = [{ key: 'piano', icon: '$piano' }, { key: 'taptap', icon: '$pad' }] as Soundboard[]
 
 
-import { Pino } from '@/classes/Pino'
+interface Icon {
+  key: string
+  value: string
+}
 export const useAppStore = defineStore('app', {
   state: () => ({
+    app: { key: 'pino', icon: '$logo' },
+    icons: [] as Icon[],
+    menu: false,
     midiDevices: [] as any[],
     midiOutputs: [] as any[],
-    octave: 2,
+    octave: 1,
     selectedMidiDevice: '',
     sounds: [] as Pino[],
-    soundboards: [{ key: 'piano', icon: '$piano' }, { key: 'taptap', icon: '$drumpad' }],
-    selectedSoundboard: { key: 'piano', icon: '$piano' }
+    soundboards: [] as Soundboard[],
+    selectedSoundboard: soundboards.find(s => s.key === 'piano') as Soundboard
   }),
   actions: {
+    loadIcons() {
+      this.icons = [
+        {
+          key: 'guitar',
+          value: '$guitar'
+        },
+        {
+          key: 'pad',
+          value: '$pad'
+        },
+        {
+          key: 'piano',
+          value: 'piano'
+        }
+      ]
+    },
     loadMidiDevices(midiAccess: MIDIAccess) {
       this.midiDevices = determineMidiInputs(midiAccess);
       this.midiOutputs = determineMidiOutputs(midiAccess);
       return this.midiDevices
     },
+    addSoundboard(soundboard: Soundboard) {
+      this.soundboards.push(soundboard)
+    },
+    loadSoundboards() {
+      this.soundboards = soundboards
+    },
+    loadSoundsByType(type: SoundboardType) {
+      switch (type) {
+        case 'piano':
+          this.sounds = piano()
+          break;
+        case 'taptap':
+          this.loadTapTapSounds()
+          break;
+      }
+      return this.sounds
+    },
     loadPianoSounds() {
-      this.sounds = pino('piano')
-      console.log(this.sounds)
+      this.sounds = piano()
       return this.sounds
     },
     loadTapTapSounds() {
@@ -38,19 +77,26 @@ export const useAppStore = defineStore('app', {
     },
     setOctave(value: number) {
       this.octave = value
+      // this.loadSounds()
     },
     setSelectedMidiDevice(id: string) {
       console.log({ id });
       this.selectedMidiDevice = id;
       return this.selectedMidiDevice;
     },
-    setSelectedSoundboard() {
-      this.selectedSoundboard = this.selectedSoundboard.key === 'piano' ? this.soundboards.find(sb => sb.key === 'taptap')! : this.soundboards.find(sb => sb.key === 'piano')!
+    setSelectedSoundboard(key: string) {
+      this.selectedSoundboard = this.soundboards.find(soundboard => soundboard.key === key) ?? {} as Soundboard
       this.loadSounds()
       return this.selectedSoundboard
+    },
+    toggleMenu() {
+      this.menu = !this.menu
     }
   },
   getters: {
+    getApp: (state) => state.app,
+    getIcons: (state) => state.icons,
+    getMenu: (state) => state.menu,
     getMidiDevices: (state) => state.midiDevices,
     getMidiOutputs: (state) => state.midiOutputs,
     getOctave: (state) => state.octave,

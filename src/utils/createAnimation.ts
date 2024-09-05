@@ -1,10 +1,7 @@
-export const createAnimation = (target: string, color: string, type: "class" | "id" = "class") => {
-  console.log({ target })
-  const delimiter = type === "class" ? "." : "#"
-
+export const createAnimation = (target: string, color: string) => {
   return {
-    targets: delimiter + target,
-    height: ["20%", "100%", "50%"],
+    targets: '#' + target,
+    height: ["75%", "90%", "100%"],
     translateY: [0, 100, 200, 300, 400, 200, 0],
     backgroundColor: [color],
     easing: "easeInOutSine",

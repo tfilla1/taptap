@@ -7,7 +7,8 @@ export const white_keys = [
   "h",
   "j",
   "k",
-  "l"]
+  "l"
+]
 
 export const black_keys = [
   "w",
@@ -17,6 +18,24 @@ export const black_keys = [
   "u",
   "o",
 ];
+
+export const piano_keys = [
+  "a",
+  "w",
+  "s",
+  "e",
+  "d",
+  "f",
+  "t",
+  "g",
+  "y",
+  "h",
+  "u",
+  "j",
+  "k",
+  "o",
+  "l"
+]
 
 export const mod_keys = [
   "z",
@@ -34,6 +53,7 @@ export const tap_one_keys = [
   "y",
   "u",
   "i",
+  "o",
   "p",
 ]
 

@@ -1,21 +1,29 @@
 <script lang="ts" setup>
-import { computed } from "vue";
 import KeyboardView from "@/components/KeyboardView.vue";
-import MidiView from "@/components/MidiView.vue";
-
+import ShellView from "@/components/ShellView.vue";
 import { useAppStore } from "@/store/app";
+import { computed } from "vue";
+
 const appStore = useAppStore();
+const selectedSoundboard = computed(() => appStore.getSelectedSoundboard);
+
+const currentOctave = computed(() => appStore.getOctave);
 
 const midiDevices = computed(() => appStore.getMidiDevices);
 </script>
 
 <template>
-  <v-row>
-    <v-col :cols="midiDevices.length > 0 ? '9' : '12'">
-      <KeyboardView />
-    </v-col>
-    <v-col v-if="midiDevices.length > 0" cols="3">
-      <MidiView />
-    </v-col>
-  </v-row>
+  <ShellView>
+    <v-alert v-if="midiDevices.length < 1" type="info" class="rounded-0"
+      >please connect a midi device, otherwise enjoy the inbuilt piano system
+      until a better name comes along ;)</v-alert
+    >
+    <div>{{ selectedSoundboard.key }}</div>
+    <KeyboardView
+      :octave="currentOctave"
+      scale="C"
+      :soundboard="selectedSoundboard.key"
+    />
+    <!-- <KeyboardView :octave="currentOctave" scale="C" soundboard="pino" /> -->
+  </ShellView>
 </template>

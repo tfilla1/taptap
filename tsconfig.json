@@ -14,15 +14,14 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "lib": ["esnext", "dom"],
-    "types": [
-      "node",
-      "vuetify"
-    ],
+    "types": ["node", "vuetify"],
     "paths": {
-      "@/*": ["src/*"]
-    },
+      "@/*": ["src/*"],
+      "@/composables": ["src/composables"]
+    }
   },
   "include": [
+    "src/composables/*",
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",

@@ -1,9 +1,10 @@
 <template>
-  <v-main class="mx-auto my-6">
+  <v-container fluid>
     <router-view />
-  </v-main>
+  </v-container>
+  <!-- <v-main class="mx-auto my-6"> </v-main> -->
 </template>
 
 <script lang="ts" setup>
-  //
+//
 </script>

@@ -2,21 +2,23 @@
 import { onKeyDown } from "@vueuse/core";
 import { useAppStore } from "@/store/app";
 import { Howl, Howler } from "howler";
-import paper from "paper";
-import { getRandomColor } from "@/utils/getRandomColor";
+// import paper from "paper";
+// import { getRandomColor } from "@/utils/getRandomColor";
 import { ref, computed, Ref } from "vue";
 import { onMounted } from "vue";
-import init from "@/services/baseball";
+// import init from "@/services/baseball";
 import { Keyboard } from "@/services/keyboard";
-import Pino from "@/classes/Pino";
+// import Pino from "@/classes/Pino";
 import { white_keys, black_keys, mod_keys } from "@/utils/keyboard";
-
+import useCanvas from "@/composables/useCanvas";
 
 const keys = [white_keys, black_keys].flat();
 // Import other sound files as needed
 // keys.push(white_keys)
 
 const appStore = useAppStore();
+const canvas = useCanvas();
+
 const hello: Ref<string> = ref("helllo");
 
 const octave: Ref<number> = ref(2);
@@ -26,11 +28,12 @@ const pinos = computed(() => appStore.getSounds);
 onMounted(() => {
   // init();
 
-  const kb = new Keyboard(appStore.getSounds, octave.value);
+  canvas.drawBackground();
+  // const kb = new Keyboard(appStore.getSounds, octave.value);
   console.log({ pino: pinos.value });
-  kb.draw();
+  // kb.draw();
 });
-const keyColor = ref("#ff00aa");
+const keyColor: Ref<string | string[]> = ref("#ff00aa");
 onKeyDown(keys, (e: KeyboardEvent) => {
   const key = e.key;
 
@@ -84,7 +87,14 @@ onKeyDown(keys, (e: KeyboardEvent) => {
   <v-card :title="hello">
     <v-card-text>
       <!-- <pre>{{ pinos }}</pre> -->
-      <div :style="{ backgroundColor: keyColor }">{{ keyColor }}</div>
+      <div
+        :style="{
+          backgroundColor:
+            typeof keyColor === 'object' ? keyColor.join('') : keyColor,
+        }"
+      >
+        {{ keyColor }}
+      </div>
       <canvas id="pinot" width="600" height="600"></canvas>
       <!-- <div style="position: relative">
         <canvas
