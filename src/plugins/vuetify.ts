@@ -4,6 +4,9 @@
  * Framework documentation: https://vuetifyjs.com`
  */
 
+import light from '../assets/colors/light.json'
+import dark from '../assets/colors/dark.json'
+
 // Styles
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
@@ -11,7 +14,7 @@ import 'vuetify/styles'
 // Composables
 import { createVuetify } from 'vuetify'
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
-import { mdiMinus, mdiPiano, mdiPlus, mdiVectorPolygon, mdiWeatherNight, mdiWeatherSunny } from '@mdi/js'
+import { mdiCircleOutline, mdiGuitarAcoustic, mdiMinus, mdiPiano, mdiPlus, mdiVectorPolygon, mdiWeatherNight, mdiWeatherSunny } from '@mdi/js'
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
   icons: {
@@ -21,7 +24,8 @@ export default createVuetify({
       light: mdiWeatherSunny,
       logo: mdiPiano,
       piano: mdiPiano,
-      drumpad: mdiVectorPolygon,
+      guitar: mdiGuitarAcoustic,
+      pad: mdiCircleOutline,
       minus: mdiMinus,
       plus: mdiPlus,
     },
@@ -33,11 +37,11 @@ export default createVuetify({
   theme: {
     themes: {
       light: {
-        colors: {
-          primary: '#EFFB8D',
-          secondary: '#F87CE7',
-        },
+        colors: light,
       },
+      dark: {
+        colors: dark,
+      }
     },
   },
 })

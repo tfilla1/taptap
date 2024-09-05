@@ -1,6 +1,5 @@
-import { Pino } from "@/classes/Pino";
 
-export const pianoData: Pino[] = [
+export const pianoData = [
   {
     note: "C",
     key: ['a', 'A', 'k', 'K'],

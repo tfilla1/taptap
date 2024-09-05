@@ -11,63 +11,51 @@ export class Pitch {
   }
 }
 
-class Note {
-  letter: string
-  url: string
 
-  constructor(letter: string, url: string) {
-    this.letter = letter
-    this.url = url
-  }
-}
-class Octave {
-  notes: Note[]
-
-  constructor(notes: Note[]) {
-    this.notes = notes
-  }
-}
-
-export class Pino_Test {
-  octave: Octave
-
-  constructor(octave: Octave) {
-    this.octave = octave
-  }
-}
-
+export type ScalePosition = 'TONIC' | 'SUPERTONIC' | 'MEDIANT' | 'SUBDOMINANT' | 'DOMINANT' | 'SUBMEDIANT' | 'SUBTONIC'
 export class Pino {
   note: string;
-  key?: string[];
-  pitches: Pitch[];
-  color: string | string[];
+  key?: string;
+  color: string[];
   border?: string;
-  enharmonics?: boolean;
+  accidental?: boolean
+  position?: ScalePosition
+  pitch?: Pitch; // taptap boards will have just one pitch... for now
+  pitches?: Pitch[]; // pino/midi currently needs an array of pitches to search
 
   constructor(
     note: string,
-    key: string[],
-    pitches: Pitch[],
-    color: string,
+    key: string,
+    color: string[],
     border: string = '',
-    enharmonics: boolean = false
+    accidental?: boolean,
+    position?: ScalePosition,
+    pitch: Pitch = {} as Pitch
   ) {
     this.note = note;
     this.key = key;
-    this.pitches = pitches;
     this.color = color;
     this.border = border ?? '';
-    this.enharmonics = enharmonics ?? false;
+    this.accidental = accidental;
+    this.position = position;
+    this.pitch = pitch ?? {} as Pitch;
   }
 }
 
-export class Soundboard {
-  type: 'piano' | 'taptap' | 'other'
-  pinos: Pino[]
+type instrument = 'drum' | 'piano' | 'guitar'
+export type SoundboardType = "midi" | "piano" | "taptap";
 
-  constructor(type: 'piano' | 'taptap' | 'other', pinos: Pino[]) {
-    this.type = type
+export class Soundboard {
+  key: string
+  pinos: Pino[]
+  icon: string
+  instrument: instrument
+
+  constructor(key: 'piano' | 'taptap' | 'other', pinos: Pino[], instrument: instrument, icon: string) {
+    this.key = key
     this.pinos = pinos
+    this.icon = icon
+    this.instrument = instrument
   }
 
 }
